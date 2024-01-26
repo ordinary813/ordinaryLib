@@ -45,9 +45,12 @@ print(f'The linear line is y={w:.2f}*(x-{mean[0]:.2f})+{mean[1]:.2f}')
 
 # ------------------------ DOES THE LINE FIT THE DATA? ------------------------ #
 # The line does not fit the data precisely but you could see a trend in the     #
-# linear regression solution to try and approximate the output give an input    #
+# linear regression solution to try and approximate the output given an input   #
 # ----------------------------------------------------------------------------- #
 
+
+
+# ----------------------------------------------------------------------------- #
 # Calculate mean array, mean[0]= mean of X, mean[1] = mean of y
 mean = np.array([np.mean(data[:,0]),np.mean(data[:,1])])
 # Calculate standrad deviation array, std[0] = std of X, std[1] = std of y
@@ -62,8 +65,11 @@ w = Linreg_sol(newX, newy)
 
 # Restore the original line. if y'=wx' (after standardization) than (y-u_y)/std_y = w(x-u_x)/std_x, isolate y.
 print(f'The linear line is y=({w:.2f}*((x-{mean[0]:.2f})/{std[0]:.2f})*{std[1]:.2f}+{mean[1]:.2f})')
+# ----------------------------------------------------------------------------- #
 
 
+
+# ----------------------------------------------------------------------------- #
 x1 = np.arange(-0.01, 1, 0.01)
 y1 = w * (x1 - mean[0]) + mean[1]
 plt.plot(x1,y1, color = 'b', label='Regular')
@@ -74,6 +80,10 @@ x = np.arange(-0.01, 1, 0.01)
 y = w * (x - mean[0]) * std[1] / std[0] + mean[1]
 plt.plot(x,y, color = 'r', label = 'Standardized')
 plt.show()
+# ----------------------------------------------------------------------------- #
+
+
+
 
 # --------------------------- IS THE RESULT BETTER ---------------------------- #
 # The result is not that different for the better in my opinon, probably due to
@@ -81,12 +91,21 @@ plt.show()
 # ----------------------------------------------------------------------------- #
 
 
+# ---------------------------- PRINTING OUTLIERS ------------------------------ #
+data = np.array([[0.4, 3.4], [0.95, 5.8], [0.16, 2.9], [0.7, 3.6], [0.59, 3.27], [0.11, 1.89], [0.05, 4.5]])
+
+
+
+
+
+
+
 
 # ---------------------------- REMOVAL OF OUTLIERS ----------------------------- #
 # NEED TO GET THE STANDARD DERIVATION OF THE Y AXIS AND REMOVE POINTS THAT 
 # EXCCEED 1 STANDARD DEVIATION
 # need to find how to refer to f(x) - STILL NOT DONE
-data = np.array([[0.4, 3.4], [0.95, 5.8], [0.16, 2.9], [0.7, 3.6], [0.59, 3.27], [0.11, 1.89], [0.05, 4.5]])
+
 
 # set y to be the vector for yi
 y = (data[:,0]).reshape((len(data[:,0]), 1))
