@@ -1,0 +1,24 @@
+for a = 0 , x = 0 , secure f(x,a) = 0
+for a = 0 , x = 1 , secure f(x,a) = 0
+for a = 0 , x = 2 , secure f(x,a) = 0
+for a = 0 , x = 3 , secure f(x,a) = 0
+for a = 1 , x = 0 , secure f(x,a) = 0
+for a = 1 , x = 1 , secure f(x,a) = 0
+for a = 1 , x = 2 , secure f(x,a) = 0
+for a = 1 , x = 3 , secure f(x,a) = 0
+for a = 2 , x = 0 , secure f(x,a) = 0
+for a = 2 , x = 1 , secure f(x,a) = 0
+for a = 2 , x = 2 , secure f(x,a) = 1
+for a = 2 , x = 3 , secure f(x,a) = 1
+for a = 3 , x = 0 , secure f(x,a) = 0
+for a = 3 , x = 1 , secure f(x,a) = 0
+for a = 3 , x = 2 , secure f(x,a) = 1
+for a = 3 , x = 3 , secure f(x,a) = 1
+
+all in all, secure f will look like this:
+
+[0, 0, 0, 0]
+[0, 0, 0, 0]
+[0, 0, 1, 1]
+[0, 0, 1, 1]
+a is rows, x is columns
