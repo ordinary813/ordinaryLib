@@ -26,7 +26,6 @@ def Euclidean(test, data):
             # we apply square root to the entire sum and assign it to the correct cell in distances
             product = np.sqrt(product)
             distances[rowTest][rowTrain] = product
-    
     return distances
 
 def Manhattan(test, data):
@@ -41,7 +40,6 @@ def Manhattan(test, data):
                 product += np.abs(data.iloc[rowTrain][inRow] - test.iloc[rowTest][inRow])
             # assign the final sumnation of all absolute distances of features
             distances[rowTest][rowTrain] = product
-    
     return distances
 
 def Mahalanobis(test, data):
@@ -71,4 +69,13 @@ print(y_test.head())
 corr_mat = df.drop('Name', axis=1).corr()
 print(corr_mat)
 
-print(Manhattan(X_test, X_train))
+# print(Manhattan(X_test, X_train))
+
+def kNN_classify(data, labels, test, k, metric='Euclidian'):
+    arguments = (test, data)
+    distances = eval(f'{metric}(*arguments)')   #returns np[][] |test| X |data| by the given metric.
+    w = 1
+
+metric='Euclidian'
+k = 3
+kNN_classify(X_train, y_train, X_test, k, metric)
