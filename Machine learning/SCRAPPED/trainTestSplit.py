@@ -71,11 +71,23 @@ print(corr_mat)
 
 # print(Manhattan(X_test, X_train))
 
-def kNN_classify(data, labels, test, k, metric='Euclidian'):
+def kNN_classify(data, labels, test, k, metric='Euclidean'):
     arguments = (test, data)
-    distances = eval(f'{metric}(*arguments)')   #returns np[][] |test| X |data| by the given metric.
-    w = 1
+    distances = eval(f'{metric}(*arguments)')   #returns np[][] |test| X |data| by the given metric. basically evaluates "*metric*(test,data)"
+    predictions = np.zeros([test.shape[0]])
+    for rowTest in range(distances.shape[0]):
+        
+        # this array holds the indices of k neareast neighbors, this also returns normal indices and not
+        # indices from labels - FIX IT
+        kSmallestIndices = np.argpartition(distances[rowTest],k)[:k]
+        # counter class, each index of this class holds the counter for its value
+        countClasses = np.zeros((np.unique(labels).shape[0]))
 
-metric='Euclidian'
-k = 3
-kNN_classify(X_train, y_train, X_test, k, metric)
+        for i in range(kSmallestIndices.shape[0]):
+            countClasses[labels.loc[kSmallestIndices[i]]] += 1
+            # countClasses = [(x, y) for x in np.unique(labels) for y in kSmallestIndices[rowTrain]]
+        # get the class that was closest to the current test sample the most
+        predictions[rowTest] = countClasses.argmax()
+    return predictions
+
+kNN_classify(X_train,y_train,X_test,3)

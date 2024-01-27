@@ -19,12 +19,12 @@ data = np.array([[0.4, 3.4], [0.95, 5.8], [0.16, 2.9], [0.7, 3.6], [0.59, 3.27],
 # ------------------------- IMPLEMENTATION ------------------------------- #
 X = (data[:,0]).reshape((len(data[:,0]), 1))
 y = (data[:,1]).reshape((len(data[:,1]), 1))
+
 w = Linreg_sol(X, y)
 #calculate mean array, mean[0]= mean of X, mean[1] = mean of y
 mean = np.array([np.mean(X),np.mean(y)])
 plt.scatter(X, y, color='blue', label='Data')
 plt.scatter(mean[0], mean[1], color='darkblue', label='mean')
-w1 = w
 x = np.arange(-1, 1, 0.01)
 y0 = w * (x - mean[0]) + mean[1]
 plt.plot(x,y0, color='blue')
@@ -38,8 +38,7 @@ plt.scatter(0, 0, color='darkred', label='mean')
 
 w = Linreg_sol(X, y)
 x = np.arange(-1, 1, 0.01)
-y0 = w * x 
-w2 = w
+y0 = w * x
 plt.plot(x,y0, color='red')
 plt.grid()
 plt.show()
