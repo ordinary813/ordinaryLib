@@ -23,25 +23,25 @@ y = (data[:,1]).reshape((len(data[:,1]), 1))
 w = Linreg_sol(X, y)
 #calculate mean array, mean[0]= mean of X, mean[1] = mean of y
 mean = np.array([np.mean(X),np.mean(y)])
-plt.scatter(X, y, color='blue', label='Data')
-plt.scatter(mean[0], mean[1], color='darkblue', label='mean')
-x = np.arange(-1, 1, 0.01)
-y0 = w * (x - mean[0]) + mean[1]
-plt.plot(x,y0, color='blue')
+# plt.scatter(X, y, color='blue', label='Data')
+# plt.scatter(mean[0], mean[1], color='darkblue', label='mean')
+# x = np.arange(-1, 1, 0.01)
+# y0 = w * (x - mean[0]) + mean[1]
+# plt.plot(x,y0, color='blue')
 
 #center data
 X = X - mean[0]
 y = y - mean[1]
-plt.scatter(X, y, color='red', label='Data')
-plt.scatter(0, 0, color='darkred', label='mean')
+# plt.scatter(X, y, color='red', label='Data')
+# plt.scatter(0, 0, color='darkred', label='mean')
 # --------------------------------$--------------------------------------- #
 
 w = Linreg_sol(X, y)
-x = np.arange(-1, 1, 0.01)
-y0 = w * x
-plt.plot(x,y0, color='red')
-plt.grid()
-plt.show()
+# x = np.arange(-1, 1, 0.01)
+# y0 = w * x
+# plt.plot(x,y0, color='red')
+# plt.grid()
+# plt.show()
 # Restore the original line. if y'=wx' (after removing bias) than y-u_y = w(x-u_x), isolate y.
 print(f'The linear line is y={w:.2f}*(x-{mean[0]:.2f})+{mean[1]:.2f}')
 
@@ -109,6 +109,10 @@ data = np.array([[0.4, 3.4], [0.95, 5.8], [0.16, 2.9], [0.7, 3.6], [0.59, 3.27],
 
 X = (data[:,0]).reshape((len(data[:,0]), 1))
 y = (data[:,1]).reshape((len(data[:,1]), 1))
+
+#center data
+X = X - mean[0]
+y = y - mean[1]
 
 mean = np.array([np.mean(X),np.mean(y)])
 std = np.array([np.std(X),np.std(y)])
