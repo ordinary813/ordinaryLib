@@ -58,7 +58,7 @@ df = pd.read_csv('Machine learning/SCRAPPED/CSGO-Weapons-Data.csv')
 X = df.drop(['Type','Name'], axis=1)         # Feature matrix
 y = df['Type']                      # Output vector     
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=21)
 
 print(X_train.head())
 print(y_train.head())
@@ -98,20 +98,34 @@ def kNN_classify(data, labels, test, k, metric='Euclidean'):
     return predictions
 
 metrics = ['Euclidean', 'Manhattan']
-fig, axs = plt.subplots(2, 2, figsize=(15, 10))
+fig, axs = plt.subplots(1, 2, figsize=(15, 5))
 
 for idx, metric in enumerate(metrics):
   # Plot data points and fitting line for Ordinary Least Squares
 
-  ks = np.arange(1, 20, 2)
+  ks = np.arange(1, 8, 2) # change from 8 to 20 for submission
   accs = []
   for k in ks:
     c = kNN_classify(X_train, y_train, X_test, k, metric)
-    accs.append()   # Implement here
+    accs.append(np.mean(c != [y_test.iloc[i] for i in range(y_test.shape[0])]))   # Implement here
 
-  axs[idx // 2, idx % 2].plot(ks, accs, color='red')
-  axs[idx // 2, idx % 2].set_xlabel('k')
-  axs[idx // 2, idx % 2].set_ylabel('accuracy')
-  axs[idx // 2, idx % 2].set_title(metric)
-  axs[idx // 2, idx % 2].set_xticks(ks)
+  axs[idx].plot(ks, accs, color='red')
+  axs[idx].set_xlabel('k')
+  axs[idx].set_ylabel('accuracy')
+  axs[idx].set_title(metric)
+  axs[idx].set_xticks(ks)
+plt.show()
+
+
+ks = np.arange(1, 8, 2)
+accs = []
+for k in ks:
+  c = kNN_classify(X_train.to_numpy(), y_train, X_test.to_numpy(), k, 'Mahalanobis')
+  accs.append(np.mean(c != [y_test.iloc[i] for i in range(y_test.shape[0])]))   # Implement here
+
+plt.plot(ks, accs, color='red')
+plt.xlabel('k')
+plt.ylabel('accuracy')
+plt.title('Mahalanobis')
+plt.xticks(ks)
 plt.show()
