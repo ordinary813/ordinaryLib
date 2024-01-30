@@ -53,7 +53,7 @@ y_test = test_df['Class'].values
 
 # compute the likelihood of the sample x being distributed for a normal distribution
 # with mean vector mean, and covariance matrix covariance
-def likelihood(x, mean, covariance):
+def findPDF(x, mean, covariance):
     d = len(mean)                           # amount of features (14)
     
     #compute the multivariate gaussian pdf
@@ -82,7 +82,7 @@ def classify_point_gaussian_bayes(x):
         cov_c = np.cov(X_c, rowvar=False)   # compute covariance matrix for current class
         prior_c = len(X_c) / len(X_train)   # compute prior for the current class
 
-        likelihood = likelihood(x, mean_c, cov_c)
+        likelihood = findPDF(x, mean_c, cov_c)
         score = np.log(likelihood) + np.log(prior_c)
         scores.append(score)
         
@@ -117,5 +117,15 @@ def classify_point_gaussian_naive_bayes(x):
         
     
     predicted_class = classes[np.argmax(scores)]
-    return predicted_class    
+    return predicted_class
 # ____________________________________ $ ____________________________________ #
+
+res = []
+for idx, test_point in enumerate(X_test):
+  res.append(classify_point_gaussian_bayes(test_point) == y_test[idx])
+print(f'Test accuracy for gaussian bayes is {res.count(True)/len(res)}')
+
+res = []
+for idx, test_point in enumerate(X_test):
+  res.append(classify_point_gaussian_naive_bayes(test_point) == y_test[idx])
+print(f'Test accuracy for gaussian naive bayes is {res.count(True)/len(res)}')
