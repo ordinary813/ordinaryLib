@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from sklearn.model_selection import train_test_split
+
 # ------------------------------------ 1 ------------------------------------ #
 df = pd.read_csv("https://sharon.srworkspace.com/ml/datasets/hw1/wine.data.csv")
 
@@ -29,23 +31,31 @@ print(df.head(5))
 # splitting data into 80/20, I'm assuming I can't use sklearn
 
 # shuffles the dataframe for randomness of the split
-shuffled_df = df.sample(frac=1, random_state=21)
+# shuffled_df = df.sample(frac=1, random_state=21)
 
-# choose the index to split on 80% of the data
-split_index = int(0.8 * len(shuffled_df))
+# # choose the index to split on 80% of the data
+# split_index = int(0.8 * len(shuffled_df))
 
-# split the data into train and test samples
-train_df = shuffled_df[:split_index]
-test_df = shuffled_df[split_index:]
+# # split the data into train and test samples
+# train_df = shuffled_df[:split_index]
+# test_df = shuffled_df[split_index:]
 
-# Separate features and the labels (Class)
-# X_train and test are of dimensions |samples| * 13
-# y_train and test are of dimensions |samples|
-X_train = train_df.drop('Class', axis=1).values
-y_train = train_df['Class'].values
+# # Separate features and the labels (Class)
+# # X_train and test are of dimensions |samples| * 13
+# # y_train and test are of dimensions |samples|
+# X_train = train_df.drop('Class', axis=1).values
+# y_train = train_df['Class'].values
 
-X_test = test_df.drop('Class', axis=1).values
-y_test = test_df['Class'].values
+# X_test = test_df.drop('Class', axis=1).values
+# y_test = test_df['Class'].values
+
+X = df.drop('Class', axis=1)         # Feature matrix
+y = df['Class']                      # Output vector     
+
+X = X.to_numpy()
+y = y.to_numpy()
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=25, stratify=y)
 # ____________________________________ $ ____________________________________ #
 
 
@@ -111,8 +121,7 @@ def classify_point_gaussian_naive_bayes(x):
         cov_c = np.cov(X_c, rowvar=False)   # compute covariance matrix for current class
         prior_c = len(X_c) / len(X_train)   # compute prior for the current class
 
-        likelihood = likelihood(x,mean_c, np.diag(np.diag(cov_c)))
-        likelihood = np.prod(1 / np.sqrt(2 * np.pi * cov_c) * np.exp(-(x - mean_c)**2 / (2 * cov_c)))
+        likelihood = findPDF(x, mean_c, np.diag(np.diag(cov_c)))    #finding pdf 
         score = np.log(likelihood) + np.log(prior_c)
         scores.append(score)
         
