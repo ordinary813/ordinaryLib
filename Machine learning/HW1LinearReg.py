@@ -71,12 +71,15 @@ std = np.array([np.std(data[:,0]),np.std(data[:,1])])
 # Implement the standardization scaling on the data
 newData = (data - mean) / std
 
+newMean = np.array([np.mean(newData[:,0]),np.mean(newData[:,1])])
+newStd = np.array([np.std(newData[:,0]),np.std(newData[:,1])])
+
 newX = (newData[:,0]).reshape((len(newData[:,0]), 1))
 newy = (newData[:,1]).reshape((len(newData[:,1]), 1))
 w = Linreg_sol(newX, newy)
 
 # Restore the original line. if y'=wx' (after standardization) than (y-u_y)/std_y = w(x-u_x)/std_x, isolate y.
-print(f'The linear line is y=({w:.2f}*((x-{mean[0]:.2f})/{std[0]:.2f})*{std[1]:.2f}+{mean[1]:.2f})')
+print(f'The linear line is y=({w:.2f}*((x-{newMean[0]:.2f})/{newStd[0]:.2f})*{newStd[1]:.2f}+{newMean[1]:.2f})')
 # ----------------------------------------------------------------------------- #
 
 
@@ -107,30 +110,32 @@ plt.show()
 # ---------------------------- PRINTING OUTLIERS ------------------------------ #
 data = np.array([[0.4, 3.4], [0.95, 5.8], [0.16, 2.9], [0.7, 3.6], [0.59, 3.27], [0.11, 1.89], [0.05, 4.5]])
 
-X = (data[:,0]).reshape((len(data[:,0]), 1))
-y = (data[:,1]).reshape((len(data[:,1]), 1))
+X = (data[:,0]).reshape((len(data[:,0]), 1))    # reshape the array to nx1
+y = (data[:,1]).reshape((len(data[:,1]), 1))    # reshape the array to nx1
+w = Linreg_sol(X,y)                             # calculate w
 
-#center data
-X = X - mean[0]
-y = y - mean[1]
-
+#calculate mean array, mean[0]= mean of X, mean[1] = mean of y
 mean = np.array([np.mean(X),np.mean(y)])
-std = np.array([np.std(X),np.std(y)])
 
-w = Linreg_sol(X, y)
-# I'm gonna have to find b0 in order to determine which points are one standard
-# deviation above the best-fit line, since I don't know where the best-fit line
-# is without b0.
-b0 = mean[1] - w * mean[0]      # the mean is present at all lines we can draw
+# Calculate standrad deviation array, std[0] = std of X, std[1] = std of y
+std = np.array([np.std(data[:,0]),np.std(data[:,1])])
+
+b0 = mean[1] - w * mean[0]      # calculating intecept for zero centered data
 
 # array of all predicted y's the linear regression will output - later we will
 # compare those values with the data's values
 predictedY = X * w + b0
 
-for i in range(len(data)):
-    if(np.abs(y[i] - predictedY[i]) > std[1]):
-        print(data[i])
+toRemoveIndices = []
 
+for i in range(len(data)):
+    if(np.abs(y[i] - predictedY[i]) > std[1]):          # comparing the subtraction to ONE std of y axis
+        print(f'outlier point: {data[i]} ,predicted Y: {predictedY[i][0]:.2f}')
+        toRemoveIndices.append(i)
+
+# Removal of outlier points
+for i in range(len(toRemoveIndices)):
+    data = np.delete(data, toRemoveIndices[len(toRemoveIndices)-i-1], axis = 0)
 
 # ----------------------------------------------------------------------------- #
 
