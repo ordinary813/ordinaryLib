@@ -111,6 +111,7 @@ def classify_point_gaussian_naive_bayes(x):
         cov_c = np.cov(X_c, rowvar=False)   # compute covariance matrix for current class
         prior_c = len(X_c) / len(X_train)   # compute prior for the current class
 
+        likelihood = likelihood(x,mean_c, np.diag(np.diag(cov_c)))
         likelihood = np.prod(1 / np.sqrt(2 * np.pi * cov_c) * np.exp(-(x - mean_c)**2 / (2 * cov_c)))
         score = np.log(likelihood) + np.log(prior_c)
         scores.append(score)
