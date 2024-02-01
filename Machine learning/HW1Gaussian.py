@@ -28,27 +28,6 @@ print(df.head(5))
 
 
 # ------------------------------------ 3 ------------------------------------ #
-# splitting data into 80/20, I'm assuming I can't use sklearn
-
-# shuffles the dataframe for randomness of the split
-# shuffled_df = df.sample(frac=1, random_state=21)
-
-# # choose the index to split on 80% of the data
-# split_index = int(0.8 * len(shuffled_df))
-
-# # split the data into train and test samples
-# train_df = shuffled_df[:split_index]
-# test_df = shuffled_df[split_index:]
-
-# # Separate features and the labels (Class)
-# # X_train and test are of dimensions |samples| * 13
-# # y_train and test are of dimensions |samples|
-# X_train = train_df.drop('Class', axis=1).values
-# y_train = train_df['Class'].values
-
-# X_test = test_df.drop('Class', axis=1).values
-# y_test = test_df['Class'].values
-
 X = df.drop('Class', axis=1)         # Feature matrix
 y = df['Class']                      # Output vector     
 
@@ -61,9 +40,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # ------------------------------------ 4 ------------------------------------ #
 
-# compute the likelihood of the sample x being distributed for a normal distribution
-# with mean vector mean, and covariance matrix covariance
-def findPDF(x, mean, covariance):
+# compute the likelihood of the sample x being distributed with a normal distribution,
+# mean vector 'mean', and covariance matrix 'covariance'
+def estimateLikelihood(x, mean, covariance):
     d = len(mean)                           # amount of features (14)
     
     #compute the multivariate gaussian pdf
@@ -80,25 +59,20 @@ def classify_point_gaussian_bayes(x):
     scores = []
     samplesTrain = X_train
     classesTrain = y_train
-    
+
     classes = np.unique(y_train)        # number of classes
-    class_means = []                    # mean vector for each class
-    class_covariances = []              # covariance matrices for each class
-    class_priors = []                   # the probability of a class out of the entire data
 
     for c in classes:
         X_c = X_train[y_train == c]         # array of samples that are from class c
-        mean_c = np.mean(X_c, axis=0)       # mean vector of the current class
-        cov_c = np.cov(X_c, rowvar=False)   # compute covariance matrix for current class
-        prior_c = len(X_c) / len(X_train)   # compute prior for the current class
 
-        likelihood = findPDF(x, mean_c, cov_c)
-        score = np.log(likelihood) + np.log(prior_c)
+        mean_c = np.mean(X_c, axis=0)       # mean vector of the current class (mean of each feature)
+        cov_c = np.cov(X_c, rowvar=False)   # compute covariance matrix for current class (cov matrix of all features for X_c)
+        prior_c = len(X_c) / len(X_train)   # compute prior for the current class (amount of appearances of class out of the entire data)
+
+        likelihood = estimateLikelihood(x, mean_c, cov_c)
+        score = likelihood * prior_c
+        # score = np.log(likelihood) + np.log(prior_c)
         scores.append(score)
-        
-        # class_means.append(mean_c)          # add mean vector of the current class
-        # class_covariances.append(cov_c)     # add covariance matrix for current class
-        # class_priors.append(prior_c)        # add prior of current class
     
     predicted_class = classes[np.argmax(scores)]
     return predicted_class    
@@ -111,18 +85,17 @@ def classify_point_gaussian_naive_bayes(x):
     
     scores = []
     classes = np.unique(y_train)        # number of classes
-    class_means = []                    # mean vector for each class
-    class_covariances = []              # covariance matrices for each class
-    class_priors = []                   # the probability of a class out of the entire data
 
     for c in classes:
         X_c = X_train[y_train == c]         # array of samples that are from class c
-        mean_c = np.mean(X_c, axis=0)       # mean vector of the current class
-        cov_c = np.cov(X_c, rowvar=False)   # compute covariance matrix for current class
-        prior_c = len(X_c) / len(X_train)   # compute prior for the current class
 
-        likelihood = findPDF(x, mean_c, np.diag(np.diag(cov_c)))    #finding pdf 
-        score = np.log(likelihood) + np.log(prior_c)
+        mean_c = np.mean(X_c, axis=0)       # mean vector of the current class (mean of each feature)
+        cov_c = np.cov(X_c, rowvar=False)   # compute covariance matrix for current class (cov matrix of all features for X_c)
+        prior_c = len(X_c) / len(X_train)   # compute prior for the current class (amount of appearances of class out of the entire data)
+
+        likelihood = estimateLikelihood(x, mean_c, np.diag(np.diag(cov_c)))    # finding pdf, for naive bayes I'm sending the diagonal matrix of cov_c, 
+                                                                    # it should give us the wanted result
+        score = likelihood * prior_c
         scores.append(score)
         
     
@@ -132,10 +105,28 @@ def classify_point_gaussian_naive_bayes(x):
 
 res = []
 for idx, test_point in enumerate(X_test):
+  print(f'current test point:\n {pd.DataFrame(test_point.reshape(1,13),columns=df.drop('Class', axis=1).columns.values)}')
+  print(f'Class is: {y_test[idx]}')
   res.append(classify_point_gaussian_bayes(test_point) == y_test[idx])
 print(f'Test accuracy for gaussian bayes is {res.count(True)/len(res)}')
 
 res = []
 for idx, test_point in enumerate(X_test):
+  res.append(classify_point_gaussian_naive_bayes(test_point) == y_test[idx])
+print(f'Test accuracy for gaussian naive bayes is {res.count(True)/len(res)}')
+
+from sklearn.preprocessing import StandardScaler
+standard_scaler = StandardScaler()
+
+X_train_scaled = standard_scaler.fit_transform(X_train)
+X_test_scaled = standard_scaler.transform(X_test)
+
+res = []
+for idx, test_point in enumerate(X_test_scaled):
+  res.append(classify_point_gaussian_bayes(test_point) == y_test[idx])
+print(f'Test accuracy for gaussian bayes is {res.count(True)/len(res)}')
+
+res = []
+for idx, test_point in enumerate(X_test_scaled):
   res.append(classify_point_gaussian_naive_bayes(test_point) == y_test[idx])
 print(f'Test accuracy for gaussian naive bayes is {res.count(True)/len(res)}')
