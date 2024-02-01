@@ -6,10 +6,22 @@ from sklearn.model_selection import train_test_split
 
 def readTrainData(file_name):
   df = pd.read_csv(file_name)
-  lblAll = #labels i.e. first column of the dataframe
-  texAll = #2d list where each row is an array of words
-  voc = # all unique words in the second column
-  cat = # enumerate {"not bullying", "gender", "age", "religion", "ethnicity"} in an array
+  
+  #labels i.e. first column of the dataframe
+  lbAll = df.iloc[:,0].to_numpy()
+  
+  #2d list where each row is an array of words 
+  texAll = df.iloc[:,1:].to_numpy()
+  # all unique words in the second column
+  voc = np.unique(texAll)
+  # enumerate {"not bullying", "gender", "age", "religion", "ethnicity"} in an array
+  cat = {
+    0:"not bullying",
+    1:"gender",
+    2:"age",
+    3:"religion",
+    4:"ethnicity"
+  }
   return texAll, lbAll, voc, cat
 
 def learn_NB_text():
@@ -27,8 +39,8 @@ texAll_train, lblAll_train, voc, cat = readTrainData(TRAIN_FILE)
 
 # cats must be the same at train and test
 # voc of test is irrelevant - we already trained on other voc.
-texAll_test, lblAll_test, _, __ = readTrainData(TEST_FILE)
+# texAll_test, lblAll_test, _, __ = readTrainData(TEST_FILE)
 
-Pw, P = learn_NB_text()
-sum_right = ClassifyNB_text(Pw, P)
-print(sum_right)
+# Pw, P = learn_NB_text()
+# sum_right = ClassifyNB_text(Pw, P)
+# print(sum_right)
