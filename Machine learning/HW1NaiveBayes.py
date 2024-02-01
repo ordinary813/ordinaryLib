@@ -6,7 +6,10 @@ from sklearn.model_selection import train_test_split
 
 def readTrainData(file_name):
   df = pd.read_csv(file_name)
-  # Implement here
+  lblAll = #labels i.e. first column of the dataframe
+  texAll = #2d list where each row is an array of words
+  voc = # all unique words in the second column
+  cat = # enumerate {"not bullying", "gender", "age", "religion", "ethnicity"} in an array
   return texAll, lbAll, voc, cat
 
 def learn_NB_text():

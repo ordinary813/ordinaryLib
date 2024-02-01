@@ -48,7 +48,7 @@ def estimateLikelihood(x, mean, covariance):
     #compute the multivariate gaussian pdf
     detCov = np.linalg.det(covariance)      # determinant of covariance matrix
     invCov = np.linalg.inv(covariance)      # inverse matrix of covariance matrix
-    constant = 1 / ((2 * np.pi) ** (d / 2) * np.sqrt(detCov))
+    constant = 1 / ((2 * np.pi) * np.sqrt(detCov))
 
     exponent = -0.5 * np.dot(np.dot((x - mean).T, invCov), (x - mean))
     return constant * np.exp(exponent)
@@ -105,7 +105,7 @@ def classify_point_gaussian_naive_bayes(x):
 
 res = []
 for idx, test_point in enumerate(X_test):
-  print(f'current test point:\n {pd.DataFrame(test_point.reshape(1,13),columns=df.drop('Class', axis=1).columns.values)}')
+  print(f'current test point:\n {pd.DataFrame(test_point.reshape(1,13),columns=df.drop("Class", axis=1).columns.values)}')
   print(f'Class is: {y_test[idx]}')
   res.append(classify_point_gaussian_bayes(test_point) == y_test[idx])
 print(f'Test accuracy for gaussian bayes is {res.count(True)/len(res)}')
