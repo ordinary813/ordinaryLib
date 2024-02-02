@@ -30,39 +30,34 @@ def readTrainData(file_name):
   }
   return texAll, lbAll, voc, cat
 
-# def classify_point_gaussian_bayes(x):
-#     # I'm copying the data so the original data will not change for any reason
-#     scores = []
-#     samplesTrain = X_train
-#     classesTrain = y_train
 
-#     classes = np.unique(y_train)        # number of classes
-
-#     for c in classes:
-#         X_c = X_train[y_train == c]         # array of samples that are from class c
-
-#         mean_c = np.mean(X_c, axis=0)       # mean vector of the current class (mean of each feature)
-#         cov_c = np.cov(X_c, rowvar=False)   # compute covariance matrix for current class (cov matrix of all features for X_c)
-#         prior_c = len(X_c) / len(X_train)   # compute prior for the current class (amount of appearances of class out of the entire data)
-
-#         likelihood = estimateLikelihood(x, mean_c, cov_c)
-#         score = likelihood * prior_c
-#         scores.append(score)
-    
-#     predicted_class = classes[np.argmax(scores)]
-#     return predicted_class    
-
+# need to use count vectorizer to vectorize this data, cant work with words.
 # Pw matrix of class conditional probs
 # P vector of priors
 def learn_NB_text():
   P = []
   Pw = []
+
+  # read the train dataset so we could make a vectorizer
+  df = pd.read_csv(TRAIN_FILE, header=None)
+  
+  # insert each sentence into a 1d array of strings, for vectorizer
+  strArr = [df.iloc[:,1:].to_numpy()[i][0] for i in range(np.shape(df.iloc[:,1:].to_numpy())[0])]
+  vectorizer = CountVectorizer()
+  vectorizer.fit(strArr)
+
+  print(f'Vocabulary:\n{vectorizer.vocabulary_}')
+  voc = vectorizer.vocabulary_
+  
+  vector = vectorizer.transform(strArr)
+
+  print(vector.toarray())
   # set an array of all classes
   classes = lblAll_train
-  featureSamples = texAll_train
+  tweets = texAll_train
 
   for c in classes:
-    samples_c = featureSamples[classes == c]
+    samples_c = tweets[classes == c]
 
   return Pw, P
 
