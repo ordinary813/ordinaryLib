@@ -28,7 +28,7 @@ def readTrainData(file_name):
 
 
 # need to use count vectorizer to vectorize this data, cant work with words.
-# Pw matrix of class conditional probs, i.e |class| 
+# Pw matrix of class conditional probs, i.e |class| x ||
 # P vector of priors
 def learn_NB_text():
 
@@ -41,7 +41,6 @@ def learn_NB_text():
   
   # declare a word vector, a 2d counting array with |rows| x |unique words in all text|
   wordVector = vectorizer.transform(texAll_train).toarray()
-  print(wordVector)
 
   # set an array of all classes
   classes = lblAll_train
@@ -67,18 +66,56 @@ def learn_NB_text():
   P = lblDict
 
   # create a matrix the size of |labels| x |unique words|
+  # each cell in the place [row][col] holds the probability P(tweet|CLASS)
+  # meaning, the probability in class, that a word is going to appear
+  # basically sum of #WORD in current class/sum of all #words from class tweets
   Pw = np.zeros((np.shape(cat)[0],np.shape(wordVector)[1]))
 
-  for rowIndex in range(len(np.shape(cat)[0])):
-    for wordIndex in range(len(np.shape(wordVector)[1])):
-      i = 1 #CCHANGE HERE, SHOULD BE #WORD APPEARS IN CLASS/# WORD APPEARS IN ALL DATA
+  classTweets = np.array([])
+
+  for rowIndex in range(len(cat)):
+    totalWordsClass = 0
+    sumOfWordInClass = 0
+    classTweetArray = np.array([])
+
+    # get the total amount of words from current class (label)
+    # iterate over the training data, for every row that has the current class
+    # add the amonut of the row's words
+    for dataRow in range(len(tweets)):
+      if(cat[rowIndex][0] == classes[dataRow]):
+        # totalWordsClass = totalWordsClass + len(tweets[rowIndex])
+
+        # add current tweet to the current array of tweets in class
+        classTweetArray = np.append(classTweetArray,tweets[dataRow])
+
+    classTweets = np.append(classTweets,classTweetArray)
+
+  for cat in range(len(classTweets)):
+    
+    for wordIndex in range(np.shape(wordVector)[1]):
+
+
+    
+  
+    # for wordIndex in range(np.shape(wordVector)[1]):
+    #   # CHANGE HERE, SHOULD BE #WORD APPEARS IN CLASS/# WORD APPEARS IN ALL DATA
+    #   Pw[rowIndex][wordIndex] = sumOfWordInClass/totalWordsClass
 
   return Pw, P
 
 # COMPARE THE ALGORITHM'S PREDICITON TO THE REAL LABELS OF TEST
 
-# def ClassifyNB_text(Pw, P):
-# 	# Implement here
+def ClassifyNB_text(Pw, P):
+   
+  tweets = texAll_test
+  labels = lblAll_test
+
+  correct = 0
+	for dataRow in range(len(tweets)):
+
+  return correct/len(tweets)
+     
+      
      
 TRAIN_FILE = 'https://sharon.srworkspace.com/ml/datasets/hw1/cyber_train.csv'
 TEST_FILE = 'https://sharon.srworkspace.com/ml/datasets/hw1/cyber_test.csv'
