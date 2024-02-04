@@ -7,10 +7,10 @@ from sklearn.model_selection import train_test_split
 def readTrainData(file_name):
   df = pd.read_csv(file_name, header=None)
 
-  #labels i.e. first column of the dataframe
+  #labels i.e. first column of the dataframe, length = #samples
   lbAll = df.iloc[:,0].to_numpy()
   
-  #2d list where each row is an array of words 
+  #2d list where each row is an array of words , |samples| x |amount of words in each row|
   texAll = df.iloc[:,1:].to_numpy()
   texAll = [row[0].split() for row in texAll]
   
@@ -22,34 +22,25 @@ def readTrainData(file_name):
 
   # find all unique classes in lbAll
   cat = np.unique(lbAll)
-  cat = np.reshape(cat,[len(cat),1])
 
   return texAll, lbAll, voc, cat
 
 
-# need to use count vectorizer to vectorize this data, cant work with words.
 # Pw matrix of class conditional probs, i.e |class| x ||
 # P vector of priors
 def learn_NB_text():
 
-  # this object is used for vectorizing words in a string (just counts them), 
-  # it usually takes strings but since textAll is words I disabled the analyzer
-  # https://stackoverflow.com/questions/47711515/apply-countvectorizer-to-column-with-list-of-words-in-rows-in-python
-  vectorizer = CountVectorizer(analyzer=lambda x: x)
-  vectorizer.fit(texAll_train)
-  voc = vectorizer.vocabulary_
-  
-  # declare a word vector, a 2d counting array with |rows| x |unique words in all text|
-  wordVector = vectorizer.transform(texAll_train).toarray()
-
-  # set an array of all classes
+  # don't want to work with global variables, 
+  # copying the features to 'tweets', and the labels to 'classes'
   classes = lblAll_train
   tweets = texAll_train
+  
+  # labelVectorizer = CountVectorizer()
+  # labelVector = labelVectorizer.fit_transform(classes)
 
   lblDict = {}
   count = 0
-  
-  # go over each possible label
+  # go over each possible label to find priors
   for label in range(len(cat)):
     lblDict[cat[label][0]] = []
 
@@ -65,55 +56,87 @@ def learn_NB_text():
     count = 0
   P = lblDict
 
+  # this object is used for vectorizing words in a string (just counts them), 
+  # it usually takes strings but since textAll is words I disabled the analyzer
+  # https://stackoverflow.com/questions/47711515/apply-countvectorizer-to-column-with-list-of-words-in-rows-in-python
+  vectorizer = CountVectorizer(analyzer=lambda x: x)
+  vectorizer.fit(texAll_train)
+  voc = vectorizer.vocabulary_
+  
+  # declare a word vector, a 2d counting array with |rows| x |unique words in all text|
+  wordVector = vectorizer.transform(texAll_train).toarray()
+  
   # create a matrix the size of |labels| x |unique words|
   # each cell in the place [row][col] holds the probability P(tweet|CLASS)
   # meaning, the probability in class, that a word is going to appear
   # basically sum of #WORD in current class/sum of all #words from class tweets
   Pw = np.zeros((np.shape(cat)[0],np.shape(wordVector)[1]))
 
-  classTweets = np.array([])
+  vectorizer = CountVectorizer(analyzer=lambda x: x)
+  data = vectorizer.fit_transform(tweets)
 
-  for rowIndex in range(len(cat)):
-    totalWordsClass = 0
-    sumOfWordInClass = 0
-    classTweetArray = np.array([])
+  uniqueWords = vectorizer.get_feature_names_out()
 
-    # get the total amount of words from current class (label)
-    # iterate over the training data, for every row that has the current class
-    # add the amonut of the row's words
-    for dataRow in range(len(tweets)):
-      if(cat[rowIndex][0] == classes[dataRow]):
-        # totalWordsClass = totalWordsClass + len(tweets[rowIndex])
+  Pw = np.zeros((len(cat),len(uniqueWords)))
 
-        # add current tweet to the current array of tweets in class
-        classTweetArray = np.append(classTweetArray,tweets[dataRow])
+  for i,label in enumerate(cat):
+      # rows where label appears in the data
+      label_indices = [idx for idx, cat in enumerate(classes) if cat == label]
+      label_word_counts = data[label_indices, :].sum(axis=0)
+      total_words_in_label = label_word_counts.sum()
+      Pw[i, :] = label_word_counts / total_words_in_label
 
-    classTweets = np.append(classTweets,classTweetArray)
+  return Pw, P
+  # classTweets = np.array([])
 
-  for cat in range(len(classTweets)):
-    
-    for wordIndex in range(np.shape(wordVector)[1]):
+  # for rowIndex in range(len(cat)):
+  #   totalWordsClass = 0
+  #   sumOfWordInClass = 0
+  #   classTweetArray = np.array([])
+
+  #   # get the total amount of words from current class (label)
+  #   # iterate over the training data, for every row that has the current class
+  #   # add the amonut of the row's words
+  #   for dataRow in range(len(tweets)):
+  #     if(cat[rowIndex][0] == classes[dataRow]):
+  #       # totalWordsClass = totalWordsClass + len(tweets[rowIndex])
+
+  #       # add current tweet to the current array of tweets in class
+  #       classTweetArray = np.append(classTweetArray,tweets[dataRow])
+
+  #   classTweets = np.append(classTweets,classTweetArray)
 
 
-    
+
+  # --------------------------- CHECK ------------------------ #
+  # for i, category in enumerate(cat):
+
+  #   catIndex = [index for index,category2 in]
+  #   # an array that each index holds how much a word appears for a certain class
+  #   wordCountsInC = wordVector[classTweets, :].sum(axis=0)
+  #   # a value that is the total amount of words with the appearance of a certain class in the data
+  #   totalWordsInC = wordCountsInC.sum()
+  #   # computation of a word in the i'th cell probability of being in a certain class
+  #   Pw[i,:] = wordCountsInC/totalWordsInC
   
     # for wordIndex in range(np.shape(wordVector)[1]):
     #   # CHANGE HERE, SHOULD BE #WORD APPEARS IN CLASS/# WORD APPEARS IN ALL DATA
     #   Pw[rowIndex][wordIndex] = sumOfWordInClass/totalWordsClass
 
-  return Pw, P
+  
 
 # COMPARE THE ALGORITHM'S PREDICITON TO THE REAL LABELS OF TEST
 
-def ClassifyNB_text(Pw, P):
+# def ClassifyNB_text(Pw, P):
+
    
-  tweets = texAll_test
-  labels = lblAll_test
+#   tweets = texAll_test
+#   labels = lblAll_test
 
-  correct = 0
-	for dataRow in range(len(tweets)):
+#   correct = 0
+# 	for dataRow in range(len(tweets)):
 
-  return correct/len(tweets)
+#   return correct/len(tweets)
      
       
      
