@@ -4,7 +4,7 @@ import numpy as np
 NUMBER_OF_AND = 24
 
 # returns (r, 'secret' Xor r)
-def shr(secret, n=2):
+def shr(secret):
     r = np.random.choice([0, 1])
     return [r, r ^ secret]
 

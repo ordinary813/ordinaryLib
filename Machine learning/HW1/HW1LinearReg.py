@@ -112,6 +112,8 @@ data = np.array([[0.4, 3.4], [0.95, 5.8], [0.16, 2.9], [0.7, 3.6], [0.59, 3.27],
 
 X = (data[:,0]).reshape((len(data[:,0]), 1))    # reshape the array to nx1
 y = (data[:,1]).reshape((len(data[:,1]), 1))    # reshape the array to nx1
+X = X - mean[0]
+y = y - mean[1]
 w = Linreg_sol(X,y)                             # calculate w
 
 #calculate mean array, mean[0]= mean of X, mean[1] = mean of y

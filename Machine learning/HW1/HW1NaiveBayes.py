@@ -73,9 +73,9 @@ def learn_NB_text():
       # total amount of words of the current label
       sumWordsLabel = wordCountsLabel.sum()
 
-      # for every word, calculate |curent word in class| / |words in class|
+      # for every word, calculate |curent word in class| / |words in class| with laplace smoothing
       for wordIndex in range(len(uniqueWords)):
-        Pw[i][wordIndex] = wordCountsLabel[0][wordIndex] / sumWordsLabel
+        Pw[i][wordIndex] = (wordCountsLabel[0][wordIndex] + 1) / (sumWordsLabel + len(uniqueWords))
 
   return Pw, P
 
@@ -88,6 +88,7 @@ def ClassifyNB_text(Pw, P):
 
   tweets = texAll_test
   labels = lblAll_test
+  laplaceSmooth = 1
 
   vectorizer = CountVectorizer(analyzer=lambda x: x)
   tweetsVector = vectorizer.fit_transform(texAll_train)
@@ -107,11 +108,7 @@ def ClassifyNB_text(Pw, P):
       if wordIndex != -1:
         # calculate the log probability of the word given each label and update label_probabilities
         for i, label in enumerate(cat):
-          labelProbs[i] += np.log(Pw[i][wordIndex] + 1e-9)
-        # since every tweet is going to have a different amonut of words,
-        # I'm going to divide the multiplication of all probabilities 
-        # by the amount of numbers in  current tweet
-        # labelProbs[i] = labelProbs[i] + np.log(len(tweets[rowIndex]) + 1e-9)
+          labelProbs[i] += np.log(Pw[i][wordIndex])
 
     # choose the label with the highest probability
     predicted_label = cat[np.argmax(labelProbs)]
