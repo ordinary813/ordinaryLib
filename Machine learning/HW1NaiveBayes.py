@@ -25,121 +25,104 @@ def readTrainData(file_name):
 
   return texAll, lbAll, voc, cat
 
-
-# Pw matrix of class conditional probs, i.e |class| x ||
-# P vector of priors
 def learn_NB_text():
-
   # don't want to work with global variables, 
   # copying the features to 'tweets', and the labels to 'classes'
   classes = lblAll_train
   tweets = texAll_train
-  
-  # labelVectorizer = CountVectorizer()
-  # labelVector = labelVectorizer.fit_transform(classes)
 
-  lblDict = {}
-  count = 0
+  # declare a dictionary that will hold (category: it's prior)
+  labelDict = {}
+
   # go over each possible label to find priors
-  for label in range(len(cat)):
-    lblDict[cat[label][0]] = []
-
-    # sum appearances of current label out of all training samples
-    for j in range(len(classes)):
-      if(classes[j] == cat[label]):
+  for label in cat:
+    # create a new cell for each unique label
+    labelDict[label] = []
+    count = 0
+    # iterate over samples
+    for rowIndex in range(len(classes)):
+      # if the current row has the right label, increment count
+      if(classes[rowIndex] == label):
         count = count + 1
     
     # calculate the prior and push it to the array
     prior = count / len(classes)
-    lblDict[cat[label][0]].append(prior)
+    labelDict[label].append(prior)
 
     count = 0
-  P = lblDict
-
+  P = labelDict
+  
   # this object is used for vectorizing words in a string (just counts them), 
   # it usually takes strings but since textAll is words I disabled the analyzer
   # https://stackoverflow.com/questions/47711515/apply-countvectorizer-to-column-with-list-of-words-in-rows-in-python
   vectorizer = CountVectorizer(analyzer=lambda x: x)
-  vectorizer.fit(texAll_train)
-  voc = vectorizer.vocabulary_
-  
-  # declare a word vector, a 2d counting array with |rows| x |unique words in all text|
-  wordVector = vectorizer.transform(texAll_train).toarray()
+  tweetsVector = vectorizer.fit_transform(tweets)
+
+  uniqueWords = vectorizer.get_feature_names_out()
   
   # create a matrix the size of |labels| x |unique words|
   # each cell in the place [row][col] holds the probability P(tweet|CLASS)
-  # meaning, the probability in class, that a word is going to appear
-  # basically sum of #WORD in current class/sum of all #words from class tweets
-  Pw = np.zeros((np.shape(cat)[0],np.shape(wordVector)[1]))
-
-  vectorizer = CountVectorizer(analyzer=lambda x: x)
-  data = vectorizer.fit_transform(tweets)
-
-  uniqueWords = vectorizer.get_feature_names_out()
-
   Pw = np.zeros((len(cat),len(uniqueWords)))
 
   for i,label in enumerate(cat):
-      # rows where label appears in the data
-      label_indices = [idx for idx, cat in enumerate(classes) if cat == label]
-      label_word_counts = data[label_indices, :].sum(axis=0)
-      total_words_in_label = label_word_counts.sum()
-      Pw[i, :] = label_word_counts / total_words_in_label
+      # row Indices where label appears in the samples
+      labelIndices = [idx for idx, cat in enumerate(classes) if cat == label]
+
+      # creates an array that for every row of the current label - sums how many of each word there is
+      wordCountsLabel = np.array(tweetsVector[labelIndices, :].sum(axis=0))
+      # total amount of words of the current label
+      sumWordsLabel = wordCountsLabel.sum()
+
+      # for every word, calculate |curent word in class| / |words in class|
+      for wordIndex in range(len(uniqueWords)):
+        Pw[i][wordIndex] = wordCountsLabel[0][wordIndex] / sumWordsLabel
 
   return Pw, P
-  # classTweets = np.array([])
-
-  # for rowIndex in range(len(cat)):
-  #   totalWordsClass = 0
-  #   sumOfWordInClass = 0
-  #   classTweetArray = np.array([])
-
-  #   # get the total amount of words from current class (label)
-  #   # iterate over the training data, for every row that has the current class
-  #   # add the amonut of the row's words
-  #   for dataRow in range(len(tweets)):
-  #     if(cat[rowIndex][0] == classes[dataRow]):
-  #       # totalWordsClass = totalWordsClass + len(tweets[rowIndex])
-
-  #       # add current tweet to the current array of tweets in class
-  #       classTweetArray = np.append(classTweetArray,tweets[dataRow])
-
-  #   classTweets = np.append(classTweets,classTweetArray)
-
-
-
-  # --------------------------- CHECK ------------------------ #
-  # for i, category in enumerate(cat):
-
-  #   catIndex = [index for index,category2 in]
-  #   # an array that each index holds how much a word appears for a certain class
-  #   wordCountsInC = wordVector[classTweets, :].sum(axis=0)
-  #   # a value that is the total amount of words with the appearance of a certain class in the data
-  #   totalWordsInC = wordCountsInC.sum()
-  #   # computation of a word in the i'th cell probability of being in a certain class
-  #   Pw[i,:] = wordCountsInC/totalWordsInC
-  
-    # for wordIndex in range(np.shape(wordVector)[1]):
-    #   # CHANGE HERE, SHOULD BE #WORD APPEARS IN CLASS/# WORD APPEARS IN ALL DATA
-    #   Pw[rowIndex][wordIndex] = sumOfWordInClass/totalWordsClass
 
   
 
 # COMPARE THE ALGORITHM'S PREDICITON TO THE REAL LABELS OF TEST
+# Implement fhe function that classifies all tweets from the test set and computes the success rate.
+# Iterate over all tweets of test and for each tweet find the most probable category.
+def ClassifyNB_text(Pw, P):
 
-# def ClassifyNB_text(Pw, P):
+  tweets = texAll_test
+  labels = lblAll_test
 
-   
-#   tweets = texAll_test
-#   labels = lblAll_test
+  vectorizer = CountVectorizer(analyzer=lambda x: x)
+  tweetsVector = vectorizer.fit_transform(texAll_train)
 
-#   correct = 0
-# 	for dataRow in range(len(tweets)):
+  correct = 0
+  # iterate over all rows of test
+  for rowIndex in range(len(tweets)):
+    # calculate probabilities for each label
+    labelProbs = P
+  
+    # iterate over all words in the current tweet
+    for word in tweets[rowIndex]:
+      # get the index of the word from vectorizer,
+      # this is crucial because Pw's word indices are built with those indices!
+      wordIndex = vectorizer.vocabulary_.get(word, -1)
 
-#   return correct/len(tweets)
-     
-      
-     
+      if wordIndex != -1:
+        # calculate the log probability of the word given each label and update label_probabilities
+        for i, label in enumerate(cat):
+          labelProbs[i] += np.log(Pw[i][wordIndex] + 1e-9)
+        # since every tweet is going to have a different amonut of words,
+        # I'm going to divide the multiplication of all probabilities 
+        # by the amount of numbers in  current tweet
+        # labelProbs[i] = labelProbs[i] + np.log(len(tweets[rowIndex]) + 1e-9)
+
+    # choose the label with the highest probability
+    predicted_label = cat[np.argmax(labelProbs)]
+
+    # check if the predicted label matches the true label
+    if predicted_label == labels[rowIndex]:
+      correct += 1
+
+  return correct/len(tweets)
+
+
 TRAIN_FILE = 'https://sharon.srworkspace.com/ml/datasets/hw1/cyber_train.csv'
 TEST_FILE = 'https://sharon.srworkspace.com/ml/datasets/hw1/cyber_test.csv'
 
@@ -150,5 +133,5 @@ texAll_train, lblAll_train, voc, cat = readTrainData(TRAIN_FILE)
 texAll_test, lblAll_test, _, __ = readTrainData(TEST_FILE)
 
 Pw, P = learn_NB_text()
-# sum_right = ClassifyNB_text(Pw, P)
-# print(sum_right)
+sum_right = ClassifyNB_text(Pw, P)
+print(sum_right)
