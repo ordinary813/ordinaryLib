@@ -40,9 +40,9 @@ genders = ['Male','Female']
 for idx, gender in enumerate(genders):
   df['Gender'] = df['Gender'].replace({gender: idx})
   
-  features = df.columns.values[:-1]
-  rows = (len(features) // 2) + (len(features) % 2)
-  plt.figure(figsize=(12, 6))
+features = df.columns.values[:-1]
+rows = (len(features) // 2) + (len(features) % 2)
+plt.figure(figsize=(12, 6))
 
 for i, feature in enumerate(features, 1):
     plt.subplot(rows, 2, i)
