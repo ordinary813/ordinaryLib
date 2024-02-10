@@ -44,9 +44,9 @@ equation = " + ".join(equation_parts) + f" + ({intercept[0]:.3f})"
 print("Hyperplane equation:")
 print(f"  {equation}")
 
-train_features = 
-train_preds = 
-train_acc = # Implement here
+train_features = new_features
+train_preds = model.predict(train_features)
+train_acc = np.mean(train_preds == y_train)
 
 val_features = # Implement here
 val_preds = # Implement here
