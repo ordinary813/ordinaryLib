@@ -7,7 +7,7 @@ import seaborn as sns
 
 # reading data and giving names to the columns, for the sake of readability
 df = pd.read_csv('https://sharon.srworkspace.com/ml/datasets/hw2/exams.csv', header=None)
-df = df.rename(columns={0: "Test 1", 1: "Test 2", 2: "Admission"})
+df = df.rename(columns={0: "Exam 1", 1: "Exam 2", 2: "Admission"})
 
 features = df.columns.values[:-1]
 plt.figure(figsize=(12, 6))
