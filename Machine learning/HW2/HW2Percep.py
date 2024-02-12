@@ -88,9 +88,8 @@ def plot(train, labels, w, bias, show=True):
 
 def preprocessNonNegative(data, labels):
     for i in range(data.shape[0]):
-        # for every label where class is 0, negate the values and match the label
+        # for every label where class is 0, negate the features
         if(labels.iloc[i] == 0):
-            labels.iat[i] = -1
             data.iat[i,0] = -data.iat[i,0]
             data.iat[i,1] = -data.iat[i,1]
     
@@ -98,31 +97,54 @@ def preprocessNonNegative(data, labels):
     
 def perceptron(data, labels, lr = 1):
     # initialize w to be all 1's, weights is included with w0 which is why it is the dimensions + 1
-    weights = np.ones(data.shape[1] + 1)
+    a = np.ones(data.shape[1] + 1)
+    data, labels = preprocessNonNegative(data, labels)
 
     for _ in range(1000):
         # mini batch gradient descent
         # for every w in each step, calculate the loss by identifying wrong predictions and summing
-        # it to a value, add to the current point lr*sum
+        # it to a value, add to the current point lr*lossDerivative
+        # lossDerivative is the derivative of the loss function, so basically sum of all feature vectors that are miss-classified
+        lossDerivative = np.zeros(data.shape[1]+1)
         for i in range(data.shape[0]):
             # compute (a^t)*y for the current sample
-            prediction = weights[:-1].T @ data.iloc[i]
+            prediction = a[:-1].T @ data.iloc[i] + a[-1]
             if prediction < 0:
-                # the gradient of every Xi is just the value of the Xi (for perceptron)
-                weights += lr * data.iloc[i].iloc[0] + lr * data.iloc[i].iloc[1]
-                # bias += lr * data.iloc[i].iloc[0] + lr * data.iloc[i].iloc[1]
-    return weights
+                # the gradient of every Xi is just the value of the Xi (for perceptron) 
+                yi = data.iloc[i].to_numpy()
+                # (and 1)
+                yi = np.append(yi,1)
+                lossDerivative += yi
+        # update the weights according to the sum of all mis-classified samples
+        a += lr * lossDerivative
+    return a
 
-    # preprocess the reduction from a^t*t < 0 and > 0 to just < 0
-for i in range(scaledDF.shape[0]):
-    if(scaledDF.iloc[i].iloc[2] == 0):
-    # you cant multiply 0 by (-1), change it to 1
-        scaledDF.iat[i,2] = 1
-        
-        # multiply the samples feature values by (-1)
-        scaledDF.iat[i,0] = -scaledDF.iat[i,0]
-        scaledDF.iat[i,1] = -scaledDF.iat[i,1]
-            
-w = perceptron(scaledDF.drop("Admission",axis=1),scaledDF["Admission"],1)
 
-plot(scaledDF.drop("Admission",axis=1).to_numpy(), scaledDF["Admission"].to_numpy(), w[:-1], w[-1], show=True)
+def perceptronUpgrade(data, labels, lr = 1):
+    # initialize w to be all 1's, weights is included with w0 which is why it is the dimensions + 1
+    a = np.ones(data.shape[1] + 1)
+    data, labels = preprocessNonNegative(data, labels)
+    ws = np.ones(data.shape[1] + 1)
+    for _ in range(1000):
+        # mini batch gradient descent
+        # for every w in each step, calculate the loss by identifying wrong predictions and summing
+        # it to a value, add to the current point lr*lossDerivative
+        # lossDerivative is the derivative of the loss function, so basically sum of all feature vectors that are miss-classified
+        lossDerivative = np.zeros(data.shape[1]+1)
+        for i in range(data.shape[0]):
+            # compute (a^t)*y for the current sample
+            prediction = a[:-1].T @ data.iloc[i] + a[-1]
+            if prediction < 0:
+                # the gradient of every Xi is just the value of the Xi (for perceptron) 
+                yi = data.iloc[i].to_numpy()
+                # (and 1)
+                yi = np.append(yi,1)
+                lossDerivative += yi
+        # update the weights according to the sum of all mis-classified samples
+        a += lr * lossDerivative
+        ws = np.vstack([ws,a])
+    return ws
+
+a = perceptron(scaledDF.drop("Admission",axis=1),scaledDF["Admission"])
+
+plot(scaledDF.drop("Admission",axis=1).to_numpy(), scaledDF["Admission"].to_numpy(), a[:-1], a[-1], show=True)
