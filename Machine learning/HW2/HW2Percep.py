@@ -148,3 +148,5 @@ def perceptronUpgrade(data, labels, lr = 1):
 a = perceptron(scaledDF.drop("Admission",axis=1),scaledDF["Admission"])
 
 plot(scaledDF.drop("Admission",axis=1).to_numpy(), scaledDF["Admission"].to_numpy(), a[:-1], a[-1], show=True)
+
+# convert to numpy. add a column of 1's to the features so that it would be yi instead of xi
