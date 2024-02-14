@@ -39,28 +39,61 @@ df = df.drop(['User ID'], axis=1)
 genders = ['Male','Female']
 for idx, gender in enumerate(genders):
   df['Gender'] = df['Gender'].replace({gender: idx})
-  
-features = df.columns.values[:-1]
 
-df.plot(kind='density', subplots=True, layout=(1,4), figsize=(12, 6), sharex=False)
-plt.show()
-
-# rows = (len(features) // 2) + (len(features) % 2)
-# plt.figure(figsize=(12, 6))
-
-# for i, feature in enumerate(features, 1):
-#     plt.subplot(rows, 2, i)
-#     plt.hist(df[feature], density=True, bins=20, alpha=0.7, color='skyblue', edgecolor='black')
-#     plt.title(f'Density Plot of {feature}')
-#     plt.xlabel(feature)
-#     plt.ylabel('Density')
-
-# plt.tight_layout()
+# df.drop(['Purchased'],axis=1).plot(kind='density', subplots=True, layout=(1,3), figsize=(8, 4), sharex=False)
 # plt.show()
 
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+scaler.fit(df[['Age', 'EstimatedSalary']])
+df[['Age', 'EstimatedSalary']] = scaler.transform(df[['Age', 'EstimatedSalary']])
+
+# First, split into training and testing sets (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(df.drop('Purchased', axis=1), df['Purchased'], test_size=0.2, random_state=42)
+
+# Then, split the remaining data into training and validation sets (70% train, 30% validation)
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=42)
+
+# convert the dataframe to numpy array
+X_train = X_train.values
+X_test = X_test.values
+X_val = X_val.values
+
+y_train = y_train.values
+y_test = y_test.values
+y_val = y_val.values
 
 def sigmoid(z):
   return 1/(1+np.exp(-z))
 
 def Logistic_Regression_via_GD(P,y,lr,lamda = 0):
+  m, n = P.shape
+  w = np.random.randn(n, 1)  # Initialize weights with random values
+  b = 0  # Initialize bias
+
+  for _ in range(1000):
+    # Compute the hypothesis function
+    z = np.dot(P, w) + b
+    phi = sigmoid(z)
+
+    # Compute the gradient of the loss function
+    dw = (1 / m) * np.dot(P.T, (phi - y))
+    db = (1 / m) * np.sum(phi - y)
+
+    # Update the weights using gradient descent
+    w -= lr * dw
+    b -= lr * db
+
+  return w, b
+
+def predict(x, w, b):
+    z = np.dot(x, w) + b
+    h = sigmoid(z)
+    return h
+
+
+w, b =Logistic_Regression_via_GD(X_train,y_train,1)
+
+print("w =" +w+ "\nb = " +b)
