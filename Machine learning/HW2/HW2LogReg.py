@@ -41,17 +41,26 @@ for idx, gender in enumerate(genders):
   df['Gender'] = df['Gender'].replace({gender: idx})
   
 features = df.columns.values[:-1]
-rows = (len(features) // 2) + (len(features) % 2)
-plt.figure(figsize=(12, 6))
 
-for i, feature in enumerate(features, 1):
-    plt.subplot(rows, 2, i)
-    plt.hist(df[feature], density=True, bins=20, alpha=0.7, color='skyblue', edgecolor='black')
-    plt.title(f'Density Plot of {feature}')
-    plt.xlabel(feature)
-    plt.ylabel('Density')
-
-plt.tight_layout()
+df.plot(kind='density', subplots=True, layout=(1,4), figsize=(12, 6), sharex=False)
 plt.show()
 
+# rows = (len(features) // 2) + (len(features) % 2)
+# plt.figure(figsize=(12, 6))
+
+# for i, feature in enumerate(features, 1):
+#     plt.subplot(rows, 2, i)
+#     plt.hist(df[feature], density=True, bins=20, alpha=0.7, color='skyblue', edgecolor='black')
+#     plt.title(f'Density Plot of {feature}')
+#     plt.xlabel(feature)
+#     plt.ylabel('Density')
+
+# plt.tight_layout()
+# plt.show()
+
 from sklearn.model_selection import train_test_split
+
+def sigmoid(z):
+  return 1/(1+np.exp(-z))
+
+def Logistic_Regression_via_GD(P,y,lr,lamda = 0):
