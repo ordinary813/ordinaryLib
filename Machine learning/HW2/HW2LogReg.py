@@ -40,6 +40,9 @@ genders = ['Male','Female']
 for idx, gender in enumerate(genders):
   df['Gender'] = df['Gender'].replace({gender: idx})
 
+# preprocess the data to fit with the gradient later
+df['Purchased'] = df['Purchased'].replace(0, -1)
+
 # df.drop(['Purchased'],axis=1).plot(kind='density', subplots=True, layout=(1,3), figsize=(8, 4), sharex=False)
 # plt.show()
 
@@ -69,31 +72,46 @@ def sigmoid(z):
   return 1/(1+np.exp(-z))
 
 def Logistic_Regression_via_GD(P,y,lr,lamda = 0):
-  m, n = P.shape
-  w = np.random.randn(n, 1)  # Initialize weights with random values
-  b = 0  # Initialize bias
+  n, d = P.shape
+  w = np.ones(d)
+  w0 = 0
 
+# need to gradient descent loop, compute the "probability - phi" of being the wrong class, so need to check in each loop of samples
+# what is the label and compute phi accordingly
   for _ in range(1000):
-    # Compute the hypothesis function
-    z = np.dot(P, w) + b
-    phi = sigmoid(z)
+    gradient = 0
+    gradientBias = 0
+    for i in range(n):
+      # calculate current sample z
+      z = w @ P[i] + w0
+      # calcualte the current expression to add to the sum of the gradient
+      if y[i] == 1:
+        gradient += y[i]*P[i]*(1-sigmoid(z))
+        gradientBias += y[i]*1*(1-sigmoid(z))
+      elif y[i] == -1:
+        gradient += y[i]*P[i]*sigmoid(z)
+        gradientBias += y[i]*1*sigmoid(z)
+    # update the weights using gradient descent
+    w += lr  * gradient
+    w0 += lr *  gradientBias
+  return w, w0
 
-    # Compute the gradient of the loss function
-    dw = (1 / m) * np.dot(P.T, (phi - y))
-    db = (1 / m) * np.sum(phi - y)
+# w vector and bias
+# x is a feature vector of a sample
+def predict(x,w,b):
+  z = w @ x + b
+  if z >= 0.5:
+    return 1
+  elif z < 0.5:
+    return -1
 
-    # Update the weights using gradient descent
-    w -= lr * dw
-    b -= lr * db
+w, b =Logistic_Regression_via_GD(X_train,y_train,0.1)
+print("w =" ,w, "\nb = " ,b)
 
-  return w, b
+count = 0
+for i in range(X_test.shape[0]):
+  if y_test[i] == predict(X_test[i],w,b):
+    count += 1
+print("Accuracy = ", 100 * count/X_test.shape[0], "%")
 
-def predict(x, w, b):
-    z = np.dot(x, w) + b
-    h = sigmoid(z)
-    return h
-
-
-w, b =Logistic_Regression_via_GD(X_train,y_train,1)
-
-print("w =" +w+ "\nb = " +b)
+plot(X_test, y_test, w, b)
