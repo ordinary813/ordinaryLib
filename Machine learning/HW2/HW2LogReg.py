@@ -72,25 +72,32 @@ def sigmoid(z):
   return 1/(1+np.exp(-z))
 
 def Logistic_Regression_via_GD(P,y,lr,lamda = 0):
+  # n samples, d features
   n, d = P.shape
+  # it was easier to comprehend w and w0 seperately
   w = np.ones(d)
   w0 = 0
 
-# need to gradient descent loop, compute the "probability - phi" of being the wrong class, so need to check in each loop of samples
-# what is the label and compute phi accordingly
   for _ in range(1000):
     gradient = 0
     gradientBias = 0
+    # for every sample, calculate z. 
+    # then if true label == 1: compute yi*xi*P(C=-1|xi), and for bias yi*1*P(C=-1|xi)
+    # if true label == -1: compute yi*xi*P(C=1|xi), and for bias yi*1*P(C=1|xi)
     for i in range(n):
-      # calculate current sample z
       z = w @ P[i] + w0
       # calcualte the current expression to add to the sum of the gradient
       if y[i] == 1:
-        gradient += y[i]*P[i]*(1-sigmoid(z))
-        gradientBias += y[i]*1*(1-sigmoid(z))
+        gradient += y[i] * P[i] * (1-sigmoid(z))
+        gradientBias += y[i] * 1 * (1-sigmoid(z))
       elif y[i] == -1:
-        gradient += y[i]*P[i]*sigmoid(z)
-        gradientBias += y[i]*1*sigmoid(z)
+        gradient += y[i] * P[i] * sigmoid(z)
+        gradientBias += y[i] * 1 * sigmoid(z)
+
+    # regularization functionality
+    gradient += 2 * lamda * w
+    gradientBias += 2 * lamda * w0
+
     # update the weights using gradient descent
     w += lr  * gradient
     w0 += lr *  gradientBias
@@ -115,3 +122,27 @@ for i in range(X_test.shape[0]):
 print("Accuracy = ", 100 * count/X_test.shape[0], "%")
 
 plot(X_test, y_test, w, b)
+
+lamads = np.arange(0, 5, 0.1)
+maxLamda = 0
+maxAccuracy = 0
+for lamda in lamads:
+  w, b =Logistic_Regression_via_GD(X_train,y_train,0.1, lamda)
+
+  count = 0
+  for i in range(X_val.shape[0]):
+    if y_val[i] == predict(X_val[i],w,b):
+      count += 1
+  accuracy = count/X_val.shape[0]
+
+  if accuracy > maxAccuracy:
+    maxLamda = lamda
+    maxAccuracy = accuracy
+  print(f"Valdation accuracy for lamda={lamda:.2f}: {accuracy * 100}%")
+
+w, b = Logistic_Regression_via_GD(X_train, y_train, 0.1, maxLamda)
+count = 0
+for i in range(X_test.shape[0]):
+  if y_test[i] == predict(X_test[i],w,b):
+    count += 1
+print("Accuracy = ", 100 * count/X_test.shape[0], "%")
