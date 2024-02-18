@@ -24,6 +24,7 @@ y_val = data_dict['y_val']
 # this function gets a feature array and returns its ellipsoid kernel
 # features = [x1,x2]
 # new_features = [x1^2, x2^2, x1, x2]
+# ----------------------------------------------- #
 def ellipsify(features):
   new_features = []
 
@@ -36,11 +37,11 @@ def ellipsify(features):
   new_features = np.asarray(new_features)
   return new_features
 
-X_train = ellipsify(X_train)
-X_val = ellipsify(X_val)
+# ----------------------------------------------- #
+new_features = ellipsify(X_train)
 
 model = SVC(kernel='linear', C=10)
-model.fit(X_train, y_train)
+model.fit(new_features, y_train)
 
 # Get the hyperplane equation coefficients and intercept
 coefficients = model.coef_[0]
@@ -55,11 +56,11 @@ equation = " + ".join(equation_parts) + f" + ({intercept[0]:.3f})"
 print("Hyperplane equation:")
 print(f"  {equation}")
 
-train_features = X_train
+train_features = ellipsify(X_train)
 train_preds = model.predict(train_features)
 train_acc = np.mean(train_preds == y_train)
 
-val_features = X_val
+val_features = ellipsify(X_val)
 val_preds = model.predict(val_features)
 val_acc = np.mean(val_preds == y_val)
 
@@ -67,8 +68,8 @@ xx, yy = np.meshgrid(np.arange(-2, 2.2, 0.1), np.arange(-2, 2.2, 0.1))
 data = np.c_[xx.ravel(), yy.ravel()]
 
 # have to see what's wrong here
-new_features = ellipsify(data)          # Implement here the new features on 'data'
-Z = model.predict(new_features)         # Implement here the predictions of data into 2 classes, using w, b you found
+new_features = ellipsify(data)
+Z = model.predict(new_features)
 Z = Z.reshape(xx.shape)
 
 fig, axs = plt.subplots(1, 2, figsize=(12, 4))

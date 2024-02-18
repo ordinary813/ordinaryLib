@@ -50,7 +50,7 @@ def plot(train, labels, w, bias, show=True):
 	# Create a figure and axis object
 	fig, ax = plt.subplots()
 
-	c0 = train[labels == -1]
+	c0 = train[labels == 0]
 	c1 = train[labels == 1]
 
 	# Plot the data
@@ -119,6 +119,30 @@ def perceptron(data, labels, lr = 1):
         a += lr * lossDerivative
     return a
 
+def PerceptronWork(data, labels, lr = 1):
+  # n samples, d features
+  n, d = data.shape
+  # it was easier to comprehend w and w0 seperately
+  w = np.ones(d)
+  w0 = 0
+
+  for _ in range(1000):
+    gradient = 0
+    gradientBias = 0
+
+    for i in range(n):
+      prediction = w @ data.iloc[i] + w0
+      if prediction < 0:
+        gradient = data.iloc[i]
+        if data.iloc[i].iloc[-1] == -1:
+            gradientBias = -1
+        elif data.iloc[i].iloc[-1] == 1:
+            gradientBias = -1
+
+    # update the weights using gradient descent
+    w += lr  * gradient
+    w0 += lr *  gradientBias
+  return w, w0
 
 def perceptronUpgrade(data, labels, lr = 1):
     # initialize w to be all 1's, weights is included with w0 which is why it is the dimensions + 1
@@ -145,8 +169,9 @@ def perceptronUpgrade(data, labels, lr = 1):
         ws = np.vstack([ws,a])
     return ws
 
-a = perceptron(scaledDF.drop("Admission",axis=1),scaledDF["Admission"])
+w, b = PerceptronWork(scaledDF.drop("Admission",axis=1),scaledDF["Admission"])
 
-plot(scaledDF.drop("Admission",axis=1).to_numpy(), scaledDF["Admission"].to_numpy(), a[:-1], a[-1], show=True)
+print(f'w = {w}, b = {b}')
+plot(scaledDF.drop("Admission",axis=1).to_numpy(), scaledDF["Admission"].to_numpy(), w, b, show=True)
 
 # convert to numpy. add a column of 1's to the features so that it would be yi instead of xi
