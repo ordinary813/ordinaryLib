@@ -71,7 +71,7 @@ def transformFeatures(data, labels):
             y[i] = -y[i]
     return y
 
-def perceptron(data, labels, lr = 1, upgrade = False):
+def perceptron(data, labels, lr = 1, num_iterations = 10000,upgrade = False):
     # n samples, d features
     n, d = data.shape
     # initialize a = [w w0] to be all 1's, dim = |w| + 1
@@ -81,7 +81,7 @@ def perceptron(data, labels, lr = 1, upgrade = False):
     # initialize y = [x 1] to the data, it is already preprocessed after the following line
     y = transformFeatures(data, labels)
 
-    for _ in range(10000):
+    for _ in range(num_iterations):
         lossDerivative = 0
         for i in range(n):
             # compute (a^t)*y for the current sample
@@ -95,18 +95,45 @@ def perceptron(data, labels, lr = 1, upgrade = False):
          return ws
     return a
 
-# a = perceptron(data, labels, 0.01)
-# print(f'a = {a}')
+a = perceptron(data, labels, lr=0.01)
+print(f'a = {a}')
 
 # plot(data, labels, a[:-1], a[-1])
 
-ws = perceptron(data, labels, 0.01, True)    # Implement here
 
-def plot_anim(ws):
-  for ww in ws:
-    plt.clf()
-    plot(data, labels, ww[:-1], ww[-1], False)
-    display(plt.gcf())
-    clear_output(wait=True)  # Clear the previous plot
 
-plot_anim(ws)
+# ws = perceptron(data, labels, 0.01, True)    # Implement here
+
+# def plot_anim(ws):
+#   for ww in ws:
+#     plt.clf()
+#     plot(data, labels, ww[:-1], ww[-1], False)
+#     display(plt.gcf())
+#     clear_output(wait=True)  # Clear the previous plot
+
+# plot_anim(ws)
+
+def findR(data):
+    R = 0
+    for i in range(data.shape[0]):
+        R = max(R, np.linalg.norm(data[i]))
+    return R
+
+def deviationVector(data, labels, w):
+    dev = []
+    y = transformFeatures(data, labels)
+
+    for i in range(data.shape[0]):
+        di = max(0, 1 - labels[i] * w @ y[i])
+        dev.append(di)
+    return dev
+
+dev = deviationVector(data,labels,a)
+D = np.linalg.norm(dev)
+R = findR(data)
+upperBound = 2 * ((R + D) ** 2)
+print(f'Upper bound of mistakes is: {upperBound}')
+
+a = perceptron(data, labels, num_iterations=int(np.ceil(upperBound)))
+
+plot(data, labels, a[:-1], a[-1])
