@@ -131,6 +131,7 @@ def deviationVector(data, labels, w):
 dev = deviationVector(data,labels,a)
 D = np.linalg.norm(dev)
 R = findR(data)
+print(f'R = {R}, D = {D}')
 upperBound = 2 * ((R + D) ** 2)
 print(f'Upper bound of mistakes is: {upperBound}')
 

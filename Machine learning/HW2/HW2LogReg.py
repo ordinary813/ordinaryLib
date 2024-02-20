@@ -114,7 +114,7 @@ def predict(x,w,b):
   elif z < 0.5:
     return -1
 
-w, b =Logistic_Regression_via_GD(X_train,y_train,0.1)
+w, b =Logistic_Regression_via_GD(X_real_train,y_real_train,0.1)
 print("w =" ,w, "\nb = " ,b)
 
 count = 0
@@ -129,7 +129,7 @@ lamads = np.arange(0, 5, 0.1)
 maxLamda = 0
 maxAccuracy = 0
 for lamda in lamads:
-  w, b =Logistic_Regression_via_GD(X_train,y_train,0.1, lamda)
+  w, b =Logistic_Regression_via_GD(X_real_train,y_real_train,0.1, lamda)
 
   count = 0
   for i in range(X_val.shape[0]):
