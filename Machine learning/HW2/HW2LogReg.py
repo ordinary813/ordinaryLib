@@ -57,16 +57,18 @@ df[['Age', 'EstimatedSalary']] = scaler.transform(df[['Age', 'EstimatedSalary']]
 X_train, X_test, y_train, y_test = train_test_split(df.drop('Purchased', axis=1), df['Purchased'], test_size=0.2, random_state=42)
 
 # Then, split the remaining data into training and validation sets (70% train, 30% validation)
-X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=42)
+X_real_train, X_val, y_real_train, y_val = train_test_split(X_train, y_train, test_size=0.3, random_state=42)
 
 # convert the dataframe to numpy array
 X_train = X_train.values
 X_test = X_test.values
 X_val = X_val.values
+X_real_train = X_real_train.values
 
 y_train = y_train.values
 y_test = y_test.values
 y_val = y_val.values
+y_real_train = y_real_train.values
 
 def sigmoid(z):
   return 1/(1+np.exp(-z))
