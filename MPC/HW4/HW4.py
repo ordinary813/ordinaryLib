@@ -50,20 +50,35 @@ def OR(x, y):
 # layer1c2 is defined as 2nd calculation at layer 1 etc.
 def twoBitMulti(secret1,secret2):
     layer1c1 = AND(secret1[1],secret2[0])
-    # check(ver(tagAliceA[0],))
-    # check(ver(tagAliceX[0],))
+    check(ver(tagAliceX[0], alice.kArr[0][0], alice.kArr[0][1], secret2[0][0]))
     
     layer1c2 = AND(secret1[1],secret2[1]) #LSB
-    # check(ver(tagAliceA[1],))
-    # check(ver(tagAliceX[1],))
+    check(ver(tagAliceX[1], alice.kArr[1][0], alice.kArr[1][1], secret2[1][0]))
     
     layer1c3 = AND(secret1[0],secret2[1])
-    # check(ver(tagAliceA[2],))
-    # check(ver(tagAliceX[2],))
+    check(ver(tagAliceX[2], alice.kArr[2][0], alice.kArr[2][1], secret2[1][0]))
     
     layer1c4 = AND(secret1[0],secret2[0])
-    # check(ver(tagAliceA[3],))
-    # check(ver(tagAliceX[3],))
+    check(ver(tagAliceX[3], alice.kArr[3][0], alice.kArr[7][1], secret2[0][0]))
+    
+    layer2c1 = XOR(layer1c1,layer1c3) #2nd bit
+    layer2c2 = AND(layer1c1,layer1c3)
+    layer3c1 = XOR(layer1c4, layer2c2) #3rd bit
+    layer3c2 = AND(layer1c4, layer2c2) #MSB
+    return [layer3c2,layer3c1,layer2c1,layer1c2] # The 4-bit calculation from MSB to LSB
+
+def twoBitMulti2(secret1,secret2):
+    layer1c1 = AND(secret1[1],secret2[0])
+    check(ver(tagAliceX[4], alice.kArr[4][0], alice.kArr[4][1], secret2[0][0]))
+    
+    layer1c2 = AND(secret1[1],secret2[1]) #LSB
+    check(ver(tagAliceX[5], alice.kArr[5][0], alice.kArr[5][1], secret2[1][0]))
+    
+    layer1c3 = AND(secret1[0],secret2[1])
+    check(ver(tagAliceX[6], alice.kArr[6][0], alice.kArr[6][1], secret2[1][0]))
+    
+    layer1c4 = AND(secret1[0],secret2[0])
+    check(ver(tagAliceX[7], alice.kArr[7][0], alice.kArr[7][1], secret2[0][0]))
     
     layer2c1 = XOR(layer1c1,layer1c3) #2nd bit
     layer2c2 = AND(layer1c1,layer1c3)
@@ -98,8 +113,8 @@ def boolianCircuit(a1SecretVec,a2SecretVec,x1SecretVec,x2SecretVec):
     # a2SecretVec = [ s(MSB of a2), s(LSB of a2)]
     # ... for x
     # first we preform a1*x1, a2*x2 as specified in the equation
-    product1 = twoBitMulti(a1SecretVec,x1SecretVec) 
-    product2 = twoBitMulti(a2SecretVec,x2SecretVec) 
+    product1 = twoBitMulti(a1SecretVec,x1SecretVec)
+    product2 = twoBitMulti2(a2SecretVec,x2SecretVec) 
 
     # now we add the two products to get [CarryOut,b4,b3,b2,b1] Where b4 is MSB
     sum = fourBitAdder(product1,product2)
@@ -188,7 +203,7 @@ def ver(tag, a, b, x):
     return (tag == a*x + b)
 
 def check(bool):
-    if(bool):
+    if(not bool):
         sys.exit("AND gate failed to authenticate.")
 # ------------------------------------------------------- #
     
@@ -245,14 +260,6 @@ tagAliceX = [tag(alice.kArr[i+4][0], alice.kArr[i+4][1], secretAliceX[i]) for i 
 # compute the tags for every k
 tagBobA = [tag(bob.kArr[i][0], bob.kArr[i][1], secretBobA[i]) for i in range(int(NUMBER_OF_TOUHCED_AND/2))]
 tagBobX = [tag(bob.kArr[i+4][0], bob.kArr[i+4][1], secretBobX[i]) for i in range(int(NUMBER_OF_TOUHCED_AND/2))]
-
-# alice sends her secret sharings of her 2 numbers, same as bob,
-# the circuit computes equation 3
-# secure = boolianCircuit(
-#             [shr(alice.a2),shr(alice.a1)],
-#             [shr(alice.a4),shr(alice.a3)],
-#             [shr(bob.x2),shr(bob.x1)],
-#             [shr(bob.x4),shr(bob.x3)])
 
 # each row is a vector of 2 secret shares - or 2 bits.
 secure = boolianCircuit(
