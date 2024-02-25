@@ -4,7 +4,6 @@ import sys
 NUMBER_OF_AND = 24
 NUMBER_OF_TOUHCED_AND = 8
 
-
 # returns (r, 'secret' Xor r)
 def shr(value):
     r = np.random.choice([0, 1])
@@ -50,16 +49,16 @@ def OR(x, y):
 # layer1c2 is defined as 2nd calculation at layer 1 etc.
 def twoBitMulti(secret1,secret2):
     layer1c1 = AND(secret1[1],secret2[0])
-    check(ver(tagAliceX[0], alice.kArr[0][0], alice.kArr[0][1], secret2[0][0]))
+    check(ver(tagAliceX[1], alice.kArr[5][0], alice.kArr[5][1], secret2[0][0]))
     
     layer1c2 = AND(secret1[1],secret2[1]) #LSB
-    check(ver(tagAliceX[1], alice.kArr[1][0], alice.kArr[1][1], secret2[1][0]))
+    check(ver(tagAliceX[0], alice.kArr[4][0], alice.kArr[4][1], secret2[1][0]))
     
     layer1c3 = AND(secret1[0],secret2[1])
-    check(ver(tagAliceX[2], alice.kArr[2][0], alice.kArr[2][1], secret2[1][0]))
+    check(ver(tagAliceX[0], alice.kArr[4][0], alice.kArr[4][1], secret2[1][0]))
     
     layer1c4 = AND(secret1[0],secret2[0])
-    check(ver(tagAliceX[3], alice.kArr[3][0], alice.kArr[7][1], secret2[0][0]))
+    check(ver(tagAliceX[1], alice.kArr[5][0], alice.kArr[5][1], secret2[0][0]))
     
     layer2c1 = XOR(layer1c1,layer1c3) #2nd bit
     layer2c2 = AND(layer1c1,layer1c3)
@@ -69,16 +68,16 @@ def twoBitMulti(secret1,secret2):
 
 def twoBitMulti2(secret1,secret2):
     layer1c1 = AND(secret1[1],secret2[0])
-    check(ver(tagAliceX[4], alice.kArr[4][0], alice.kArr[4][1], secret2[0][0]))
+    check(ver(tagAliceX[3], alice.kArr[7][0], alice.kArr[7][1], secret2[0][0]))
     
     layer1c2 = AND(secret1[1],secret2[1]) #LSB
-    check(ver(tagAliceX[5], alice.kArr[5][0], alice.kArr[5][1], secret2[1][0]))
+    check(ver(tagAliceX[2], alice.kArr[6][0], alice.kArr[6][1], secret2[1][0]))
     
     layer1c3 = AND(secret1[0],secret2[1])
-    check(ver(tagAliceX[6], alice.kArr[6][0], alice.kArr[6][1], secret2[1][0]))
+    check(ver(tagAliceX[2], alice.kArr[6][0], alice.kArr[6][1], secret2[1][0]))
     
     layer1c4 = AND(secret1[0],secret2[0])
-    check(ver(tagAliceX[7], alice.kArr[7][0], alice.kArr[7][1], secret2[0][0]))
+    check(ver(tagAliceX[3], alice.kArr[7][0], alice.kArr[7][1], secret2[0][0]))
     
     layer2c1 = XOR(layer1c1,layer1c3) #2nd bit
     layer2c2 = AND(layer1c1,layer1c3)
@@ -267,6 +266,7 @@ secure = boolianCircuit(
             [sharesA[3],sharesA[2]],
             [sharesX[1],sharesX[0]],
             [sharesX[3],sharesX[2]])
+
 
 # test the boolean circuit
 if(a1*x1 + a2*x2 >= 4):
