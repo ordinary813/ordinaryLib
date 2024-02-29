@@ -7,8 +7,9 @@ data = pd.read_csv('https://sharon.srworkspace.com/ml/datasets/hw3/banknote_auth
 
 # Define the ID3 decision tree class
 class DecisionTree:
-	def __init__(self):
+	def __init__(self, criterion='entropy'):
 		self.tree = {}
+		self.criterion = criterion
 
 	def calculate_entropy(self, data):
 		labels = data.iloc[:, -1]
@@ -17,26 +18,62 @@ class DecisionTree:
 		entropy =  -np.sum(probs * np.log2(probs))
 		return entropy
 	
+	def calculate_gini(self, data):
+		labels = data.iloc[:, -1]
+		unique_labels, labels_counts = np.unique(labels, return_counts=True)
+		probs = labels_counts/ len(labels)
+		gini =  -np.sum(probs ** 2)
+		return gini
+	
+	# calculate the information gain for a certain node, using a specific feature
 	def calculate_information_gain(self, data, feature):
-		total_entropy = self.calculate_entropy(data)
-		information_gain = total_entropy
+		if(self.criterion == 'entropy'):
+			total_entropy = self.calculate_entropy(data)
+		else:
+			total_gini = self.calculate_gini(data)
 
+		# values interval
 		values = np.linspace(np.min(data[feature]), np.max(data[feature]), 10)
 		best_treshold = None
 		best_gain = 0
 		
+		# iterate over each interval and decide which one gives us the best information gain for the current node
 		for value in values:
+			# split the current node's children into 2 sub-trees
+			# features that are greater than value (right split) 
+			# features that are lower than value (left split)
 			left_split = self.filter_data(data, feature, value, left=True)
 			right_split = self.filter_data(data, feature, value, left=False)
-			if(len(left_split) == 0 or len(right_split) == 0):
-				continue
-			left_entropy = self.calculate_entropy(left_split)
-			right_entropy = self.calculate_entropy(right_split)
-			current_entropy = (len(left_split)/data) * left_entropy + (len(right_split)/data) * right_entropy
-			gain = total_entropy - current_entropy
-			if(gain > best_gain):
-				gain = best_gain
-				best_treshold = value
+
+			# ------------------------- entropy --------------------------- #
+			if(self.criterion == 'entropy'):
+				# calculate entropy of each sub-tree, and add the weighted sum of them to 'current_entropy'
+				left_entropy = self.calculate_entropy(left_split)
+				right_entropy = self.calculate_entropy(right_split)
+				current_entropy = (len(left_split)/len(data)) * left_entropy + (len(right_split)/len(data)) * right_entropy
+
+				# calculate information gain for the current node
+				gain = total_entropy - current_entropy
+				
+				# get the max gain and the coressponding value
+				if(gain > best_gain):
+					best_gain = gain
+					best_treshold = value
+			
+			# --------------------------- gini ---------------------------- #
+			elif(self.criterion == 'gini'):
+				# calculate entropy of each sub-tree, and add the weighted sum of them to 'current_entropy'
+				left_gini = self.calculate_gini(left_split)
+				right_gini = self.calculate_gini(right_split)
+				current_gini = (len(left_split)/len(data)) * left_gini + (len(right_split)/len(data)) * right_gini
+
+				# calculate gini index for the current node
+				gini_index = total_gini - current_gini
+				
+				# get the max gain and the coressponding value
+				if(gini_index > best_gain):
+					best_gain = gini_index
+					best_treshold = value
 
 		return best_gain, best_treshold
 
@@ -121,3 +158,7 @@ class DecisionTree:
 	def plot(self):
 		depth = self._plot(self.tree, 0)
 		print(f'depth is {depth}')
+  
+tree = DecisionTree()
+tree.fit(data)
+tree.plot()
