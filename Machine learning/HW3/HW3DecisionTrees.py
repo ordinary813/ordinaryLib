@@ -27,10 +27,7 @@ class DecisionTree:
 	
 	# calculate the information gain for a certain node, using a specific feature
 	def calculate_information_gain(self, data, feature):
-		if(self.criterion == 'entropy'):
-			total_entropy = self.calculate_entropy(data)
-		elif(self.criterion == 'gini'):
-			total_gini = self.calculate_gini(data)
+		total_impurity = eval(f"self.calculate_{self.criterion}(data)")
 
 		# values interval
 		values = np.linspace(np.min(data[feature]), np.max(data[feature]), 10)
@@ -45,25 +42,18 @@ class DecisionTree:
 			left_split = self.filter_data(data, feature, value, left=True)
 			right_split = self.filter_data(data, feature, value, left=False)
 
-			# ------------------------- entropy --------------------------- #
-			if(self.criterion == 'entropy'):
-				# calculate entropy of each sub-tree, and add the weighted sum of them to 'current_entropy'
-				left_entropy = self.calculate_entropy(left_split)
-				right_entropy = self.calculate_entropy(right_split)
-				current_entropy = (len(left_split)/len(data)) * left_entropy + (len(right_split)/len(data)) * right_entropy
+			# calculate impurity of each sub-tree, and add the weighted sum of them to 'current_entropy'
+			left_impurity = eval(f"self.calculate_{self.criterion}(left_split)")
+			right_impurity = eval(f"self.calculate_{self.criterion}(right_split)")
+			current_impurity = (len(left_split)/len(data)) * left_impurity + (len(right_split)/len(data)) * right_impurity
 
-				# calculate information gain for the current node
-				gain = total_entropy - current_entropy
-				
-				# get the max gain and the coressponding value
-				if(gain > best_gain):
-					best_gain = gain
-					best_treshold = value
+			# calculate information gain for the current node
+			gain = total_impurity - current_impurity
 			
-			# --------------------------- gini ---------------------------- #
-			elif(self.criterion == 'gini'):
-
-
+			# get the max gain and the coressponding value
+			if(gain > best_gain):
+				best_gain = gain
+				best_treshold = value
 		return best_gain, best_treshold
 
 	def filter_data(self, data, feature, value, left=True):
@@ -151,3 +141,20 @@ class DecisionTree:
 tree = DecisionTree()
 tree.fit(data)
 tree.plot()
+
+train, test = train_test_split(data, test_size=0.2, random_state=42, stratify=data['class'])
+
+for criterion in ["entropy", "gini"]:
+	print(f"------------ {criterion} ------------")
+	tree = DecisionTree(criterion)
+
+	trainLabels = train.iloc[:, -1]
+	trainPreds = tree.predict(train)
+	acc = np.mean( trainPreds == trainLabels)
+	print(f'Training accuracy is {acc}')
+
+	testLabels = test.iloc[:, -1]
+	testPreds = tree.predict(test)
+	acc = np.mean( testPreds == testLabels)
+	print(f'Test accuracy is {acc}')
+	print()
