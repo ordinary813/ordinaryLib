@@ -7,9 +7,10 @@ data = pd.read_csv('https://sharon.srworkspace.com/ml/datasets/hw3/banknote_auth
 
 # Define the ID3 decision tree class
 class DecisionTree:
-	def __init__(self, criterion='entropy'):
+	def __init__(self, criterion='entropy', thresholds=10):
 		self.tree = {}
 		self.criterion = criterion
+		self.thresholds = thresholds
 
 	def calculate_entropy(self, data):
 		labels = data.iloc[:, -1]
@@ -30,7 +31,7 @@ class DecisionTree:
 		total_impurity = eval(f"self.calculate_{self.criterion}(data)")
 
 		# values interval
-		values = np.linspace(np.min(data[feature]), np.max(data[feature]), 10)
+		values = np.linspace(np.min(data[feature]), np.max(data[feature]), self.thresholds)
 		best_treshold = None
 		best_gain = 0
 		
@@ -146,15 +147,19 @@ train, test = train_test_split(data, test_size=0.2, random_state=42, stratify=da
 
 for criterion in ["entropy", "gini"]:
 	print(f"------------ {criterion} ------------")
-	tree = DecisionTree(criterion)
+	# define a decision tree and fit the training data on it
+	tree_train = DecisionTree(criterion)
+	tree_train.fit(train)
 
+	# compare true labels with predicted labels
 	trainLabels = train.iloc[:, -1]
-	trainPreds = tree.predict(train)
+	trainPreds = tree_train.predict(train)
 	acc = np.mean( trainPreds == trainLabels)
 	print(f'Training accuracy is {acc}')
 
+	# test the trained decision tree with the test set
 	testLabels = test.iloc[:, -1]
-	testPreds = tree.predict(test)
+	testPreds = tree_train.predict(test)
 	acc = np.mean( testPreds == testLabels)
 	print(f'Test accuracy is {acc}')
 	print()
