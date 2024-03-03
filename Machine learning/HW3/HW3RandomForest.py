@@ -38,35 +38,25 @@ class RandomForest:
 		return data[features + ['class']]
 
 	def sample_data(self, data):
-		# This method samples len(data) with repitition from data.
-		# You can use numpy to select random incidies.
 		indices = np.random.choice(np.arange(0, len(data.columns)-1), size=len(data.columns)-1, replace=False)
-		return data.iloc[indices, :]
+		return indices
 
 	def fit(self, data):
 		self.forest = []
 		for _ in range(self.n_estimators):
 			samp_data = data.iloc[self.sample_data(data)]
-			# Implement here
 			
-    # def fit(self, data):
-    #     self.forest = []
-    #     for _ in range(self.n_estimators):
-    #         # Sample data with replacement
-    #         sampled_data = self.sample_data(data)
-            
-    #         # Select features for the current classifier
-    #         if self.method == 'simple':
-    #             features_data = sampled_data.copy()  # Use all features
-    #         else:
-    #             features_data = self.select_features(sampled_data)
-            
-    #         # Create and fit a decision tree using the selected features
-    #         tree = DecisionTree(criterion=self.criterion)
-    #         tree.fit(features_data)
-            
-    #         # Append the trained decision tree to the forest
-    #         self.forest.append(tree)
+			# only if the method is simple we copy the entire data
+			# otherwise we select m random features to take into account
+			if(self.method == 'simple'):
+				features = samp_data.copy()
+			else:
+				features = self.select_features(samp_data)
+
+			# define a decision tree to add to the forest
+			tree = DecisionTree(criterion=self.criterion)
+			tree.fit(features)
+			self.forest.append(tree)
 
 
 	def _predict(self, X):
