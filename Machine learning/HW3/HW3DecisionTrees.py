@@ -12,6 +12,7 @@ class DecisionTree:
 		self.criterion = criterion
 		self.thresholds = thresholds
 
+	# calculate total entropy of data
 	def calculate_entropy(self, data):
 		labels = data.iloc[:, -1]
 		unique_labels, labels_counts = np.unique(labels, return_counts=True)
@@ -19,6 +20,7 @@ class DecisionTree:
 		entropy =  -np.sum(probs * np.log2(probs))
 		return entropy
 	
+	# calculate gini of data
 	def calculate_gini(self, data):
 		labels = data.iloc[:, -1]
 		unique_labels, labels_counts = np.unique(labels, return_counts=True)
@@ -28,6 +30,7 @@ class DecisionTree:
 	
 	# calculate the information gain for a certain node, using a specific feature
 	def calculate_information_gain(self, data, feature):
+		# calculate the impurity of the current node by running calculate_'criterion'(data)
 		total_impurity = eval(f"self.calculate_{self.criterion}(data)")
 
 		# values interval
@@ -35,7 +38,7 @@ class DecisionTree:
 		best_treshold = None
 		best_gain = 0
 		
-		# iterate over each interval and decide which one gives us the best information gain for the current node
+		# iterate over each threshold value and decide which one gives the best information gain for the data over a feature
 		for value in values:
 			# split the current node's children into 2 sub-trees
 			# features that are greater than value (right split) 
@@ -46,10 +49,12 @@ class DecisionTree:
 			# calculate impurity of each sub-tree, and add the weighted sum of them to 'current_entropy'
 			left_impurity = eval(f"self.calculate_{self.criterion}(left_split)")
 			right_impurity = eval(f"self.calculate_{self.criterion}(right_split)")
-			current_impurity = (len(left_split)/len(data)) * left_impurity + (len(right_split)/len(data)) * right_impurity
+
+			# this is the sum of all weighted impurities out of a node
+			sub_impurity = (len(left_split)/len(data)) * left_impurity + (len(right_split)/len(data)) * right_impurity
 
 			# calculate information gain for the current node
-			gain = total_impurity - current_impurity
+			gain = total_impurity - sub_impurity
 			
 			# get the max gain and the coressponding value
 			if(gain > best_gain):
@@ -59,6 +64,7 @@ class DecisionTree:
 
 	def filter_data(self, data, feature, value, left=True):
 		if left:
+			# return the data where the value of 'feature' is less than value, without feature column
 			return data[data[feature] <= value].drop(feature, axis=1)
 		else:
 			return data[data[feature] > value].drop(feature, axis=1)
@@ -139,27 +145,27 @@ class DecisionTree:
 		depth = self._plot(self.tree, 0)
 		print(f'depth is {depth}')
   
-tree = DecisionTree()
-tree.fit(data)
-tree.plot()
+# tree = DecisionTree()
+# tree.fit(data)
+# tree.plot()
 
-train, test = train_test_split(data, test_size=0.2, random_state=42, stratify=data['class'])
+# train, test = train_test_split(data, test_size=0.2, random_state=42, stratify=data['class'])
 
-for criterion in ["entropy", "gini"]:
-	print(f"------------ {criterion} ------------")
-	# define a decision tree and fit the training data on it
-	tree_train = DecisionTree(criterion)
-	tree_train.fit(train)
+# for criterion in ["entropy", "gini"]:
+# 	print(f"------------ {criterion} ------------")
+# 	# define a decision tree and fit the training data on it
+# 	tree_train = DecisionTree(criterion)
+# 	tree_train.fit(train)
 
-	# compare true labels with predicted labels
-	trainLabels = train.iloc[:, -1]
-	trainPreds = tree_train.predict(train)
-	acc = np.mean( trainPreds == trainLabels)
-	print(f'Training accuracy is {acc}')
+# 	# compare true labels with predicted labels
+# 	trainLabels = train.iloc[:, -1]
+# 	trainPreds = tree_train.predict(train)
+# 	acc = np.mean( trainPreds == trainLabels)
+# 	print(f'Training accuracy is {acc}')
 
-	# test the trained decision tree with the test set
-	testLabels = test.iloc[:, -1]
-	testPreds = tree_train.predict(test)
-	acc = np.mean( testPreds == testLabels)
-	print(f'Test accuracy is {acc}')
-	print()
+# 	# test the trained decision tree with the test set
+# 	testLabels = test.iloc[:, -1]
+# 	testPreds = tree_train.predict(test)
+# 	acc = np.mean( testPreds == testLabels)
+# 	print(f'Test accuracy is {acc}')
+# 	print()

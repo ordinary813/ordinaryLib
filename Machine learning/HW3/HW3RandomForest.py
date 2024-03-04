@@ -37,8 +37,9 @@ class RandomForest:
         # returns the data only with the selected m features, and their class
 		return data[features + ['class']]
 
+	# returns row indices of |selected features| to account
 	def sample_data(self, data):
-		indices = np.random.choice(np.arange(0, len(data.columns)-1), size=len(data.columns)-1, replace=False)
+		indices = np.random.choice(np.arange(0, len(data)-1), size=len(data)-1)
 		return indices
 
 	def fit(self, data):
@@ -72,3 +73,49 @@ class RandomForest:
 	def score(self, X):
 		pred = self._predict(X)
 		return (pred == X.iloc[:,-1]).sum() / len(X)
+
+def KFold2(data, model, cv=5):
+  kf = KFold(n_splits=cv)
+  scores = []
+
+  for train_index, test_index in kf.split(data):
+    train_data, test_data = data.iloc[train_index], data.iloc[test_index]
+    model.fit(train_data)
+    score = model.score(test_data)
+    scores.append(score)
+
+  return np.mean(scores)
+
+dict1 = {'entropy': [], 'gini': []}
+
+criterions = ['entropy', 'gini']
+for crt in criterions:
+  forest = RandomForest(n_estimators=3, method='simple', criterion=crt)
+  forest.fit(train)
+
+  acc = forest.score(train)
+  dict1[crt].append(acc)
+
+  acc = forest.score(test)
+  dict1[crt].append(acc)
+
+print('using 3 estimators')
+df = pd.DataFrame(dict1, columns=criterions, index=['train', 'test'])
+print(df)
+
+correct_entropy = []
+correct_gini = []
+
+for i in tqdm(range(3,13,2)):
+	forest = RandomForest(n_estimators=i, method='simple', criterion='gini')
+	correct_gini.append(KFold2(data=train, model=forest, cv=5))
+	forest = RandomForest(n_estimators=i, method='simple', criterion='entropy')
+	correct_entropy.append(KFold2(data=train, model=forest, cv=5))
+
+plt.plot(range(3,13,2), np.array(correct_entropy), label='entropy')
+plt.plot(range(3,13,2), np.array(correct_gini), label='gini')
+
+plt.legend(loc='upper left')
+plt.xlabel('trees num')
+plt.ylabel('avg accuracy')
+plt.show()
