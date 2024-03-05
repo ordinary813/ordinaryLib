@@ -74,6 +74,7 @@ class RandomForest:
 		pred = self._predict(X)
 		return (pred == X.iloc[:,-1]).sum() / len(X)
 
+
 def KFold2(data, model, cv=5):
   kf = KFold(n_splits=cv)
   scores = []
@@ -86,11 +87,55 @@ def KFold2(data, model, cv=5):
 
   return np.mean(scores)
 
+# dict1 = {'entropy': [], 'gini': []}
+
+# criterions = ['entropy', 'gini']
+# for crt in criterions:
+#   forest = RandomForest(n_estimators=3, method='simple', criterion=crt)
+#   forest.fit(train)
+
+#   acc = forest.score(train)
+#   dict1[crt].append(acc)
+
+#   acc = forest.score(test)
+#   dict1[crt].append(acc)
+
+# print('using 3 estimators')
+# df = pd.DataFrame(dict1, columns=criterions, index=['train', 'test'])
+# print(df)
+
+correct_entropy = []
+correct_gini = []
+
+# I made the range a variable for ease of use
+myRange = range(3,13,2)
+
+for i in tqdm(myRange):
+	forest = RandomForest(n_estimators=i, method='simple', criterion='gini')
+	correct_gini.append(KFold2(data=train, model=forest, cv=5))
+	forest = RandomForest(n_estimators=i, method='simple', criterion='entropy')
+	correct_entropy.append(KFold2(data=train, model=forest, cv=5))
+
+plt.plot(myRange, np.array(correct_entropy), label='entropy')
+plt.plot(myRange, np.array(correct_gini), label='gini')
+
+plt.legend(loc='upper left')
+plt.xlabel('trees num')
+plt.ylabel('avg accuracy')
+plt.show()
+
+
 dict1 = {'entropy': [], 'gini': []}
+
+best_n_entropy = np.argmax(np.array(correct_entropy)) + myRange.start
+best_n_gini = np.argmax(np.array(correct_gini)) + myRange.start
+
+# let's say I want to use the best_n to be the best for gini, then:
+best_n = best_n_gini
 
 criterions = ['entropy', 'gini']
 for crt in criterions:
-  forest = RandomForest(n_estimators=3, method='simple', criterion=crt)
+  forest = RandomForest(n_estimators=best_n, method='simple', criterion=crt)
   forest.fit(train)
 
   acc = forest.score(train)
@@ -99,23 +144,6 @@ for crt in criterions:
   acc = forest.score(test)
   dict1[crt].append(acc)
 
-print('using 3 estimators')
+print(f'using {best_n} estimators')
 df = pd.DataFrame(dict1, columns=criterions, index=['train', 'test'])
 print(df)
-
-correct_entropy = []
-correct_gini = []
-
-for i in tqdm(range(3,13,2)):
-	forest = RandomForest(n_estimators=i, method='simple', criterion='gini')
-	correct_gini.append(KFold2(data=train, model=forest, cv=5))
-	forest = RandomForest(n_estimators=i, method='simple', criterion='entropy')
-	correct_entropy.append(KFold2(data=train, model=forest, cv=5))
-
-plt.plot(range(3,13,2), np.array(correct_entropy), label='entropy')
-plt.plot(range(3,13,2), np.array(correct_gini), label='gini')
-
-plt.legend(loc='upper left')
-plt.xlabel('trees num')
-plt.ylabel('avg accuracy')
-plt.show()
