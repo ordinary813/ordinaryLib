@@ -5,8 +5,11 @@ PORT = 65432
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
-    msg = input()
-    s.sendall(msg.encode())
-    data = s.recv(1024)
-
-print(f'Recieved: {data.decode}')
+    while True:
+        msg = input()
+        if msg == 'exit':
+            print("Connection terminating...")
+            break
+        s.sendall(msg.encode())
+        data = s.recv(1024)
+        print(f'Sent: {data.decode()}')
