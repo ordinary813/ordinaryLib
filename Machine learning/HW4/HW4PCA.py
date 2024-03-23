@@ -15,8 +15,6 @@ def proccess_data(folder):
     image_arrays.append(gray_image)
   return np.array(image_arrays)
 
-print(os.listdir())
-
 smile = proccess_data('./Machine learning/HW4/kaggle/data/smile')
 non_smile = proccess_data('./Machine learning/HW4/kaggle/data/non_smile')
 
@@ -51,50 +49,126 @@ from sklearn.neighbors import KNeighborsClassifier
 
 # shrinks the data matrix to have k features
 def PCA_train(data, k):
-    flatten_data = data.reshape(np.shape(data)[0],-1)
-    # array of feature means
-    flattened_mean = np.mean(flatten_data, axis=0)
-    mu = np.mean(data, axis=0)
-    # center data
-    Z = flatten_data - flattened_mean
+  mu = np.mean(data, axis=0)
+  Z = data - mu
 
-    # calculate the scatter matrix
-    scatter_matrix = np.dot(Z.transpose(), Z)
-    eigenvals, eigenvecs = np.linalg.eig(scatter_matrix)
+  # flatten the centered array to 962x4096 instead of 962x64x64
+  # flatten the mean array
+  Z = flatten(Z)
+  mu = flatten(mu)
 
-    # find the best k components
-    best_k_indices = np.argsort(eigenvals)[::-1][:k ** 2]
-    E = eigenvecs[:, best_k_indices].transpose()
-    y = np.dot(E, Z.transpose()).transpose()
-    y = y.reshape(np.shape(y)[0], k, k)
-    return y.astype(float), mu, E
-    
+  # the scatter matrix is essentialy the covariance matrix
+  scatter_matrix = np.cov(Z, rowvar=False)
+  # since cov matrix is symettric I'll use eigh instead of eig
+  eigenvals, eigenvecs = np.linalg.eigh(scatter_matrix)
+
+  best_k_indices = np.argsort(eigenvals)[::-1][:k]
+  # E is the best k eigen vectors (k = 81)
+  E = eigenvecs[:, best_k_indices]
+  best_k_eigenvals = eigenvals[best_k_indices]
+
+  y = np.matmul(Z, E)
+  # return an array of size |samples| x (k), flattened mean array, k best eigen vectors
+  return y, mu, E , best_k_eigenvals
+
 def PCA_test(test, mu, E):
-    flatten_test = test.reshape(np.shape(test)[0],-1)
-    # array of feature means
-    flattened_mean = np.mean(flatten_test, axis=0)
-    Z = flatten_test - flattened_mean
-    y = np.dot(E, Z.transpose()).transpose()
-    y = y.reshape(np.shape(y)[0], int(np.sqrt(np.shape(E)[0])), int(np.sqrt(np.shape(E)[0])))           # basically |samples|-k-k
-    return y.astype(float)
+  flatten_test = flatten(test)
+  Z = flatten_test - mu
+  y = np.matmul(Z, E)
+  return y
 
 def recover_PCA(data, mu, E):
-    recovered = np.dot(E.transpose(), data.transpose()).transpose() + mu
-    return recovered.astype(float)
+  recovered = np.matmul(E, data) + mu
+  recovered = unflatten(recovered)
+  return recovered.astype(float)
 
-x_train_new, mu, eig = PCA_train(x_train, k=9)
+# gets a cubic array and flattens it so we 
+# can work  with features instead of pixels
+def flatten(data):
+  if(data.ndim == 2):
+    return data.reshape(-1)
+  if(data.ndim == 3):
+    return data.reshape(np.shape(data)[0], -1)
+    
+# gets a flat array and makes it a cubic array
+def unflatten(data):
+  if(data.ndim == 2):
+    return data.reshape(np.shape(data)[0], np.sqrt(np.shape(data)[1]).astype(int), np.sqrt(np.shape(data)[1]).astype(int))
+  if(data.ndim == 1):
+    return data.reshape(np.sqrt(np.shape(data)[0]).astype(int), np.sqrt(np.shape(data)[0]).astype(int))
+
+
+x_train_new, mu, eig, eig_val = PCA_train(x_train, k=81)
 x_test_new = PCA_test(x_test, mu, eig)
 
 plt.subplot(131)
 plt.title("Original Image")
-plt.imshow(x_train[1], cmap='gray')
+plt.imshow(x_train[3], cmap='gray')
 
 plt.subplot(132)
 plt.title("Image in lower dimension")
-plt.imshow(x_train_new[1], cmap='gray')
+plt.imshow(unflatten(x_train_new[3]), cmap='gray')
 
-# plt.subplot(133)
-# plt.title("Recovered Image")
-# plt.imshow(None, cmap='gray')
+plt.subplot(133)
+plt.title("Recovered Image")
+plt.imshow(recover_PCA(x_train_new[3], mu, eig), cmap='gray')
 
 plt.show()
+
+def EIG_CDF(eig_list):
+  sorted_eigenvalues = np.sort(eig_list)[::-1]
+  eigenvalues_cumsum = np.cumsum(sorted_eigenvalues)
+  eigenvalues_cumsum_normalized = eigenvalues_cumsum / np.sum(sorted_eigenvalues) # eigenvalues_cumsum[-1]
+
+  amount = np.argmax(eigenvalues_cumsum_normalized >= 0.95) + 1
+
+  plt.plot(np.arange(1, len(sorted_eigenvalues)+1), eigenvalues_cumsum_normalized)
+  plt.xlabel('Principal Component')
+  plt.ylabel('Cumulative Proportion of Variance')
+  plt.title(f'CDF of Eigenvalues - {amount} eigs preserves 95% of enetry')
+  plt.show()
+
+EIG_CDF(eig_val)
+
+
+x_train_new, mu, eig, eig_val = PCA_train(x_train, k=49)
+x_test_new = PCA_test(x_test, mu, eig)
+
+plt.subplot(131)
+plt.title("Original Image")
+plt.imshow(x_train[3], cmap='gray')
+
+plt.subplot(132)
+plt.title("Image in lower dimension")
+plt.imshow(unflatten(x_train_new[3]), cmap='gray')
+
+plt.subplot(133)
+plt.title("Recovered Image")
+plt.imshow(recover_PCA(x_train_new[3], mu, eig), cmap='gray')
+
+plt.show()
+
+from sklearn.neighbors import KNeighborsClassifier
+
+accs = []
+# ks that are x^2 and are up until 52 (49)
+ks = [i ** 2 for i in range(1,8)]
+for k in ks:
+    x_train_new, _, _, _ = PCA_train(x_train, k)
+    knn = KNeighborsClassifier(n_neighbors=k)
+    avg_accuracy = cross_val_score(knn, x_train_new, y_train, cv=5).mean()
+    accs.append(avg_accuracy)
+
+plt.figure(figsize=(14,5))
+plt.plot(ks, accs)
+plt.xlabel('k')
+plt.xticks(ks)
+plt.ylabel('avg accuracy')
+plt.show()
+
+
+knn = KNeighborsClassifier(n_neighbors=49)
+knn.fit(x_train_new, y_train)
+y_pred = knn.predict(x_test_new)
+acc = np.mean(y_test == y_pred)
+print(f'acc on test is {acc}')
