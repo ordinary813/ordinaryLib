@@ -69,7 +69,7 @@ def PCA_train(data, k):
 
   y = np.matmul(Z, E)
   # return an array of size |samples| x (k), flattened mean array, k best eigen vectors
-  return y, mu, E , best_k_eigenvals
+  return y, mu, E , eigenvals #best_k_eigenvals
 
 def PCA_test(test, mu, E):
   flatten_test = flatten(test)
@@ -118,7 +118,7 @@ plt.show()
 def EIG_CDF(eig_list):
   sorted_eigenvalues = np.sort(eig_list)[::-1]
   eigenvalues_cumsum = np.cumsum(sorted_eigenvalues)
-  eigenvalues_cumsum_normalized = eigenvalues_cumsum / np.sum(sorted_eigenvalues) # eigenvalues_cumsum[-1]
+  eigenvalues_cumsum_normalized = eigenvalues_cumsum / eigenvalues_cumsum[-1]
 
   amount = np.argmax(eigenvalues_cumsum_normalized >= 0.95) + 1
 
@@ -131,7 +131,7 @@ def EIG_CDF(eig_list):
 EIG_CDF(eig_val)
 
 
-x_train_new, mu, eig, eig_val = PCA_train(x_train, k=49)
+x_train_new, mu, eig, eig_val = PCA_train(x_train, k=169)
 x_test_new = PCA_test(x_test, mu, eig)
 
 plt.subplot(131)
@@ -151,12 +151,12 @@ plt.show()
 from sklearn.neighbors import KNeighborsClassifier
 
 accs = []
-# ks that are x^2 and are up until 52 (49)
-ks = [i ** 2 for i in range(1,8)]
+# ks that are x^2 and are up until 144
+ks = [i ** 2 for i in range(1,14)]
 for k in ks:
     x_train_new, _, _, _ = PCA_train(x_train, k)
     knn = KNeighborsClassifier(n_neighbors=k)
-    avg_accuracy = cross_val_score(knn, x_train_new, y_train, cv=5).mean()
+    avg_accuracy = np.mean(cross_val_score(knn, x_train_new, y_train, cv=5))
     accs.append(avg_accuracy)
 
 plt.figure(figsize=(14,5))
@@ -167,7 +167,7 @@ plt.ylabel('avg accuracy')
 plt.show()
 
 
-knn = KNeighborsClassifier(n_neighbors=49)
+knn = KNeighborsClassifier(n_neighbors=169)
 knn.fit(x_train_new, y_train)
 y_pred = knn.predict(x_test_new)
 acc = np.mean(y_test == y_pred)
