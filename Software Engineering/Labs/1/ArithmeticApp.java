@@ -1,3 +1,4 @@
+package org.example;
 import java.util.Scanner;
 
 public class ArithmeticApp
@@ -40,6 +41,46 @@ public class ArithmeticApp
         String[] numbers = expression.split("[-+*/]");
         String[] operators = expression.split("[0-9A-Fa-f]+");
 
+        /* --------------------- Formatting Check --------------------- */
+        // Check for consecutive operators
+        for (int i = 1; i < operators.length; i++)
+        {
+            if (operators[i].length() > 1)
+            {
+                System.out.println("Error: invalid expression: \"\"");
+                System.exit(1);
+            }
+        }
+
+        // Check for invalid characters
+        for (char c : expression.toCharArray())
+        {
+            if(base > 10)
+            {
+                if (!Character.isDigit(c) && "+-*/".indexOf(c) == -1 && "ABCDEFabcdef".indexOf(c) == -1)
+                {
+                    System.out.println("Error: Invalid character '" + c + "' in expression.");
+                    System.exit(1);
+                }
+            } else
+            {
+                if (!Character.isDigit(c) && "+-*/".indexOf(c) == -1)
+                {
+                    System.out.println("Error: Invalid character '" + c + "' in expression.");
+                    System.exit(1);
+                } else if (Character.isDigit(c))
+                {
+                    if (Integer.parseInt(String.valueOf(c), 10) >= base)
+                    {
+                        // Check if any digit is bigger than the base
+                        System.out.println("Error: invalid expression: \"\"");
+                        System.exit(1);
+                    }
+                }
+            }
+        }
+
+        // when the first number is negative - change the first operator to "", and the first number to the negative number
         if(expression.charAt(0) == '-')
         {
             numbers = removeElement(0, numbers);
@@ -49,6 +90,7 @@ public class ArithmeticApp
             operators = insertElement(operators, "", 0);
         }
 
+        /* ------------------------- Operation Implementation ------------------------ */
         // iterate over all multiplications in the expression
         for(int i = 1; i < operators.length; i++)
         {
@@ -153,6 +195,7 @@ public class ArithmeticApp
         return newArr;
     }
 
+    // recieves a decimal number and a base and converts it to the string in base
     public static String convertToBase(int number, int base)
     {
         // Convert the integer to the specified base
@@ -180,4 +223,5 @@ public class ArithmeticApp
 
         return sb.toString();
     }
+
 }
