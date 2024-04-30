@@ -1,0 +1,2 @@
+1. Thread.run() vs. Thread.start()
+thread.run prompts jvm that another thread is supposed to be running, it doesnt necessarily start running the thread.
