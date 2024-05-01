@@ -36,7 +36,7 @@ def calc_map(x, mu, sigma, prior = 0.5):
 def test(test_data, dogs_mle, dogs_prior, cats_mle, cats_prior):
     predictions = np.empty(len(test_data), dtype="object")
     for i in range(len(test_data)):
-      if (calc_map(test_data[i], dogs_mle, 0.5, dogs_prior) > calc_map(i, cats_mle, 0.5, cats_prior)):
+      if (calc_map(test_data[i], dogs_mle, 0.5, dogs_prior) > calc_map(test_data[i], cats_mle, 0.5, cats_prior)):
         predictions[i] = "dog"
       else:
         predictions[i] = "cat"
