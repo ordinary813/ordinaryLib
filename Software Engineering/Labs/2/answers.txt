@@ -1,0 +1,41 @@
+1. Thread.run() vs. Thread.start()
+thread.start prompts jvm that another thread is supposed to be exectued soon, it doesnt necessarily start running the thread.
+thread.run runs the run() function (which is originally empty).
+
+2.1. 
+Hello world from thread number 0
+Hello world from thread number 1
+Hello world from thread number 2
+Hello world from thread number 4
+Hello world from thread number 5
+Hello world from thread number 3
+Hello world from thread number 6
+Hello world from thread number 7
+Hello world from thread number 8
+Hello world from thread number 9
+That's all, folks
+
+2.2
+Hello world from thread number 0
+Hello world from thread number 3
+Hello world from thread number 2
+Hello world from thread number 1
+Hello world from thread number 4
+Hello world from thread number 5
+Hello world from thread number 6
+Hello world from thread number 7
+Hello world from thread number 8
+Hello world from thread number 9
+That's all, folks
+
+EXPLANATION
+
+2.3
+the program would wait for each thread in order of calling them in the second loop, essentially running and waiting for each thread.
+
+2.4
+calling Thread.currentThread().join() will make us wait for the current thread running to finish running (static method so doesn't matter from what object we called it).
+
+
+3.
+
