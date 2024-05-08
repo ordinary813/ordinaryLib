@@ -1,0 +1,2 @@
+crowd counting subject - what is the main objective of this subject? are we to just construct a program that counts the amount of people in a crowd?
+unimodal for various tasks - is it to take an existing model for processing audio, video or text and improve it's performance?
