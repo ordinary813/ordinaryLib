@@ -6,12 +6,18 @@ int main()
     char buffer[6];
     fgets(buffer, sizeof(buffer), stdin);
 
+    char exit[6];
+    exit[0] = 'e';
+    exit[1] = 'x';
+    exit[2] = 'i';
+    exit[3] = 't';
+    exit[4] = '\n';
+    exit[5] = 0;
+
     int first, second, result;
     char op;
 
-    printf("str:%s\n", buffer);
-
-    while (strcmp("exit\0\0", buffer) != 0)
+    while (strcmp(exit, buffer) != 0)
     {
         first = buffer[0] - '0';
         second = buffer[4] - '0';
@@ -36,6 +42,7 @@ int main()
         }
 
         printf("%d\n", result);
+        getchar();
         fgets(buffer, sizeof(buffer), stdin);
     }
     return 0;
