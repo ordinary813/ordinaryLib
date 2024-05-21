@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Operating Systems/HW0/calc",
+            "program": "${workspaceFolder}/Operating Systems/HW1/myshell",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
