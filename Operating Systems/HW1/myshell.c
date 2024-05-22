@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #define BUFFER_SIZE 100
-#define HISTORY_SIZE 25
+#define HISTORY_SIZE 64
 
 int main(void)
 {
@@ -19,6 +19,10 @@ int main(void)
 
     while (1)
     {
+        if (!run_in_backgronud)
+        {
+            wait(NULL);
+        }
         fprintf(stdout, "my-shell> ");
         memset(command, 0, BUFFER_SIZE);
         fgets(command, BUFFER_SIZE, stdin);
@@ -37,31 +41,28 @@ int main(void)
             break;
         }
 
-        // Check if the command is "history"
-        if (strncmp(command, "history", 7) == 0 && (command[7] == '\0' || isspace((unsigned char)command[7])))
+        // check for "history"
+        if (strncmp(command, "history", 7) == 0)
         {
-            for (int i = 0; i < history_count; i++)
+            // add history and continue
+            strncpy(history[history_count], command, BUFFER_SIZE - 1);
+            if (history_count < HISTORY_SIZE)
+            {
+                history_count++;
+            }
+            // history functionality
+            for (int i = history_count - 1; i >= 0; i--)
             {
                 printf("%d %s\n", i + 1, history[i]);
             }
             continue;
         }
 
-        // Add command to history
-        if (strncmp(command, "history", 7) != 0)
+        // adding of the new command
+        strncpy(history[history_count], command, BUFFER_SIZE - 1);
+        if (history_count < HISTORY_SIZE)
         {
-            // Move existing history entries down
-            for (int i = HISTORY_SIZE - 1; i > 0; i--)
-            {
-                strcpy(history[i], history[i - 1]);
-            }
-
-            // Add new command to history
-            strncpy(history[0], command, BUFFER_SIZE - 1);
-            if (history_count < HISTORY_SIZE)
-            {
-                history_count++;
-            }
+            history_count++;
         }
 
         // check for "&" in the end
@@ -72,21 +73,26 @@ int main(void)
             command[length - 2] = '\0';
             length -= 2;
         }
+        else
+        {
+            run_in_backgronud = 0;
+        }
 
         pid_t pid = fork();
         if (pid < 0)
         {
-            perror("Fork Failed");
+            perror("error");
             continue;
         }
 
         // in the child process we will run the command, in the foreground or in the background
         if (pid == 0)
         {
-            char *args[BUFFER_SIZE / 2 + 1]; // Array to hold command and arguments
+            // TEST THIS *****************************************************
+            char *args[BUFFER_SIZE / 2 + 1];
             int i = 0;
 
-            // Tokenize the command string into arguments
+            // tokenize the command string into arguments
             char *token = strtok(command, " ");
             while (token != NULL)
             {
@@ -94,14 +100,17 @@ int main(void)
                 token = strtok(NULL, " ");
                 i++;
             }
-            args[i] = NULL; // Null-terminate the array of arguments
+            // last character is NULL
+            args[i] = NULL;
 
-            // Execute the command
+            // execute the command
             if (execvp(args[0], args) == -1)
             {
-                perror("Execution failed");
+                perror("error");
             }
-            exit(EXIT_FAILURE);
+
+            // making sure the child process terminates
+            exit(1);
         }
         else
         {
@@ -112,8 +121,7 @@ int main(void)
             }
             else if (run_in_backgronud == 1)
             {
-                printf("[PID %d] running in the background.", pid);
-                run_in_backgronud = 0;
+                fprintf(stdout, "[PID %d] running in the background.\n", pid);
             }
         }
     }
