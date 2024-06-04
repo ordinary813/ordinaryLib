@@ -1,1 +1,1 @@
-SELECT coach, team, city FROM teams WHERE Established > 1960 AND Established > 1970
+SELECT coach, team FROM teams WHERE Established >= 1960 AND Established <= 1970
