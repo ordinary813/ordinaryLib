@@ -1,0 +1,1 @@
+select house, teamnum, team, city from houses,teams where num = teamnum order by house asc;
