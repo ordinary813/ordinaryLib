@@ -1,0 +1,1 @@
+select num, team, city, count(players.playerID) from teams, players where teamnum = num group by num, team, city order by num asc;

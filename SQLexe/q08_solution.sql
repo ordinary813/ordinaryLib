@@ -1,0 +1,1 @@
+SELECT sum(budget) as total_budget from budget;
