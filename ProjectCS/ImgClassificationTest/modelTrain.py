@@ -6,9 +6,9 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder 
 
-image_size = (320, 320)
-EPOCHS = 100
-MAX_IMAGES = 1250
+image_size = (200, 200)
+EPOCHS = 50
+MAX_IMAGES = 1000
 
 def load_images_and_labels(image_folder, labels_df, max_images = 500):
     images = []
@@ -19,7 +19,6 @@ def load_images_and_labels(image_folder, labels_df, max_images = 500):
             break
 
         img_path = os.path.join(image_folder, str(row['ID']) + '.png')
-        print(row['ID'])
 
         img = cv2.imread(img_path)  # Load image with OpenCV
         img = cv2.resize(img, image_size)  # Resize to target size
@@ -51,22 +50,27 @@ from tensorflow.keras import layers, models
 
 # Define CNN model
 model = models.Sequential([
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(320, 320, 3)),  # Adjust for your image size
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(200, 200, 3)),
+    layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
 
     layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
 
     layers.Conv2D(128, (3, 3), activation='relu'),
+    layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
 
     layers.Conv2D(128, (3, 3), activation='relu'),
+    layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
 
     layers.Flatten(),
-    layers.Dense(512, activation='relu'),
-    layers.Dense(len(np.unique(y_encoded)), activation='sigmoid')  # Use sigmoid for multi-class classification
+    layers.Dense(256, activation='relu'),
+    layers.Dense(len(np.unique(y_encoded)), activation='sigmoid')
 ])
+
 
 model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',  # Use sparse_categorical_crossentropy for integer labels
