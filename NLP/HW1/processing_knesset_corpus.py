@@ -132,8 +132,8 @@ def clean_speaker_name(raw_name):
     cleaned_name = re.sub(r'\(.*?\)', '', raw_name)
     cleaned_name = re.sub(prefix_pattern, '', cleaned_name)
     cleaned_name = re.sub(r'<.*?>', '', cleaned_name)
-    cleaned_name = cleaned_name.replace("<","").replace(">","")
-    return cleaned_name.strip()
+    cleaned_name = cleaned_name.replace("<","").replace(">","").strip()
+    return cleaned_name
 
 def extract_sentences(file_path):
     data = []
@@ -168,7 +168,7 @@ def extract_sentences(file_path):
                 if match:
                     speaker = match.group(1).strip()
                     speaker = clean_speaker_name(speaker)
-                    speech = [re.sub(r'<<.*?>>', '', match.group(2)).strip()]
+                    speech = [re.sub(r'<<.*?>>', '', match.group(2)).replace("<","").replace(">","").strip()]
                     if speech != ['']:
                         data.append({"speaker_name": speaker, "sentence_text": " ".join(speech)})
                 found_first_speaker = True
@@ -200,11 +200,11 @@ def extract_sentences(file_path):
                     speaker = match.group(1).strip()
                     speaker = clean_speaker_name(speaker)
                     if speech != ['']:
-                        speech.append(re.sub(r'<<.*?>>', '', match.group(2)).strip())
+                        speech.append(re.sub(r'<<.*?>>', '', match.group(2)).replace("<","").replace(">","").strip())
             elif speaker and speech:
-                text = para.text.replace(">","")
+                text = para.text.replace("<","").replace(">","").strip()
                 if text:
-                    speech.append(text.strip())
+                    speech.append(text)
     
     if speaker:
         data.append({"speaker_name": speaker, "sentence_text": " ".join(speech)})
@@ -326,7 +326,7 @@ def main():
     out_path = args.output_path
 
     print("Processing Protocols...")
-    df = produce_corpus(dir_path)
+    df = produce_corpus(dir_path, write_to_txt=True)
 
     # write all names
     with open("Speakers.txt", "w", encoding="utf-8") as f:
