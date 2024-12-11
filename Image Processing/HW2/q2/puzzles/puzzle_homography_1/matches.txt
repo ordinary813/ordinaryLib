@@ -12,8 +12,8 @@
 129 66		#img2
 
 # fourth matching
-0 0 		#img1
-0 0 		#img2
+440 112 	#img1
+41 148 		#img2
 
 ## image 3
 # first matching
@@ -29,5 +29,5 @@
 199 30		#img2
 
 # fourth matching
-0 0 		#img1
-0 0 		#img2
+385 385		#img1
+235 238		#img2
