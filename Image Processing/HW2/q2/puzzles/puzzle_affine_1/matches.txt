@@ -8,5 +8,5 @@
 255 115		#img2
 
 # third matching
-496 266		#img1
+466 296		#img1
 106 252		#img2
