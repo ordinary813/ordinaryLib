@@ -211,7 +211,7 @@ def get_k_n_t_collocations(corpus_df, k, n, t, type):
         tfidf_scores = {}
         collocation_counts = {}
 
-        print("Processing protocols...")
+        print("\nProcessing protocols...")
 
         for protocol_name, collocations in grouped:
             print(f"\rProcessing {protocol_name:<30}", end='', flush=True)
@@ -243,6 +243,8 @@ def mask_tokens_in_sentences(sentences, x):
     for sentence in sentences:
         tokens = sentence.split()
         num_tokens_to_mask = int(len(tokens) * (x / 100))
+        if num_tokens_to_mask == 0:
+            num_tokens_to_mask = 1
         tokens_to_mask = random.sample(range(len(tokens)), num_tokens_to_mask)
 
         masked_tokens = ["[*]" if i in tokens_to_mask else token for i, token in enumerate(tokens)]
@@ -251,26 +253,35 @@ def mask_tokens_in_sentences(sentences, x):
 
 # Input: a dataframe, amount of entries to mask with [*], and a percentage x
 # Output: the dataframe after applying the mask
-def mask_corpus(corpus_df, amount_to_mask, x, original_path, masked_path):
+def mask_corpus(corpus_df, amount_to_mask, x, original_path ='', masked_path=''):
     if amount_to_mask > len(corpus_df):
         amount_to_mask = len(corpus_df)
 
     # copy dataframe to ensure integrity of the original dataframe
     df_copy = corpus_df.copy()
-    mask_indices = random.sample(range(len(df_copy)), amount_to_mask)
 
-    df_copy.loc[mask_indices, 'sentence_text'] = df_copy.loc[mask_indices, 'sentence_text'].apply(
-        lambda sentence: mask_tokens_in_sentences(sentence, x)
-    )
+    more_than_5 = [i for i in range(len(df_copy)) if len(re.findall(r'\b\w+\b', df_copy.iloc[i]['sentence_text'])) >= 5]
 
-    with open(original_path, 'w', encoding='utf-8') as original_file, \
-         open(masked_path, 'w', encoding='utf-8') as masked_file:
-        
-        for index in mask_indices:
-            original_file.write(f"{corpus_df['sentence_text'].iloc[index]}\n")
-            masked_file.write(f"{df_copy['sentence_text'].iloc[index]}\n")
+    # pick senetences with more than 5 tokens
+    mask_indices = random.sample(more_than_5, amount_to_mask)
 
-    return df_copy
+    sentences_to_mask = [df_copy.iloc[i]['sentence_text'] for i in mask_indices]
+
+    masked_sentences = mask_tokens_in_sentences(sentences_to_mask, x)
+
+    for idx, i in enumerate(mask_indices):
+        df_copy.loc[df_copy.index[i], 'sentence_text'] = masked_sentences[idx]
+    
+    # print only when necessary
+    if original_path != '' and masked_path != '':
+        with open(original_path, 'w', encoding='utf-8') as original_file, \
+            open(masked_path, 'w', encoding='utf-8') as masked_file:
+            
+            for index in mask_indices:
+                original_file.write(f"{corpus_df['sentence_text'].iloc[index]}\n")
+                masked_file.write(f"{df_copy['sentence_text'].iloc[index]}\n")
+
+    return sentences_to_mask, masked_sentences
 
 def to_word(n):
     match n:
@@ -281,15 +292,53 @@ def to_word(n):
         case 4:
             return "Four"
 
+def calculate_perplexity(trigram_model, original_sentence, masked_sentence, masked_indices):
+    total_log_prob = 0
+    count = 0
+
+    for index in masked_indices:
+        # split to corresponding tokens
+        masked_tokens = masked_sentence.split()
+        original_tokens = original_sentence.split()
+
+        token = original_tokens[index]
+        context = " ".join(masked_tokens[max(0, index - 2):index])
+
+        prob = trigram_model.calculate_prob_of_sentence(f"{context} {token}") / (trigram_model.calculate_prob_of_sentence(context) + 1)
+
+        if prob > 0:
+            total_log_prob += -log(prob)
+            count += 1
+        else:
+            print(f"masked sentence prob is 0 for index {index}")
+
+    return math.exp(total_log_prob / count) if count > 0 else float('inf')
+
+
+def compute_average_perplexity(masked_sentences, original_sentences, trigram_model):
+    total_perplexity = 0
+    sentence_count = 0
+
+    for masked, original in zip(masked_sentences, original_sentences):
+        tokens = masked.split()
+        masked_indices = [i for i, token in enumerate(tokens) if token == "[*]"]
+
+        if masked_indices:
+            perplexity = calculate_perplexity(trigram_model, original, masked, masked_indices)
+            total_perplexity += perplexity
+            sentence_count += 1
+
+    return total_perplexity / sentence_count if sentence_count > 0 else float('inf')
+
 def main():
     corpus_path = 'knesset_corpus.jsonl'
     output_file = 'top_collocations.txt'
 
-    exec = 3
 
     #############################################
     ############### Exercise 2 ##################
     #############################################
+    print("----- Top collocations section -----")
 
     k = 10          # top 10 collocations
     ns = [2,3,4]    # n-grams
@@ -299,40 +348,89 @@ def main():
     trigram_model_committee = Trigram_LM("committee", corpus_path)
     trigram_model_plenary = Trigram_LM("plenary", corpus_path)
 
-    if exec == 2:
-        #save the output into a file
-        with open(output_file, 'w', encoding='utf-8') as f:
-            for n in ns:
-                f.write(f"{to_word(n)}-gram collocations:\n")
-                for score_type in types:
-                    if score_type == 'frequency':
-                        f.write(f"Frequency:\n")
-                    elif score_type == 'tfidf':
-                        f.write(f"TF-IDF:\n")
-                    
-                    for model_name, model_corpus in [
-                        ("Committee corpus", trigram_model_committee.corpus),
-                        ("Plenary corpus", trigram_model_plenary.corpus)
-                    ]:
+    #save the output into a file
+    with open(output_file, 'w', encoding='utf-8') as f:
+        for n in ns:
+            f.write(f"{to_word(n)}-gram collocations:\n")
+            for score_type in types:
+                if score_type == 'frequency':
+                    f.write(f"Frequency:\n")
+                elif score_type == 'tfidf':
+                    f.write(f"TF-IDF:\n")
+                
+                for model_name, model_corpus in [
+                    ("Committee corpus", trigram_model_committee.corpus),
+                    ("Plenary corpus", trigram_model_plenary.corpus)
+                ]:
 
-                        f.write(f"{model_name}:\n")
-                        # Get top collocations for the current configuration
-                        result = get_k_n_t_collocations(model_corpus,k, n, t, score_type)
-                        for collocation in result:
-                            f.write(f"{collocation[0]}\n")
-                        f.write("\n")  # Empty line between sections
-                f.write("\n")  # Empty line between n-gram categories
+                    f.write(f"{model_name}:\n")
+                    # Get top collocations for the current configuration
+                    result = get_k_n_t_collocations(model_corpus,k, n, t, score_type)
+                    for collocation in result:
+                        f.write(f"{collocation[0]}\n")
+                    f.write("\n")  # Empty line between sections
+            f.write("\n")  # Empty line between n-gram categories
 
         print(f"\nComplete, Output file: {output_file}", flush=True)
 
     #############################################
     ############### Exercise 3 ##################
     #############################################
-
+    print("----- Token masks section -----")
     original_ouput_path = 'original_sampled_sents.txt'
     masked_ouput_path = 'masked_sampled_sents.txt'
 
-    mask_corpus(trigram_model_committee.corpus, 10, 0.1, original_ouput_path, masked_ouput_path)
+    # print to file and get original + masked sentences
+    original_sens, masked_sens = mask_corpus(trigram_model_committee.corpus, 10, 10, original_ouput_path, masked_ouput_path)
+    print("Corpus masked...")
+    print("Original + Masked sentences written to file")
+
+    print("----- Token prediciton section -----")
+    predicted_sentences = []
+
+    for original, masked in zip(original_sens, masked_sens):
+        masked_tokens = masked.split()
+        
+        for i in range(len(masked_tokens)):
+            token = masked_tokens[i]
+            
+            if token == "[*]":  # If the token is a masked token
+                # generate the toekn using the plenary model
+                generated_token = trigram_model_plenary.generate_next_token(" ".join(masked_tokens[:i]))
+                
+                # replace [*] with the predicted token
+                masked_tokens[i] = generated_token[0]
+        
+        # Join the tokens back into a full sentence
+        predicted_sentence = " ".join(masked_tokens)
+        predicted_sentences.append(predicted_sentence)
+
+    results_path = 'sampled_sents_results.txt'
+    with open(results_path, 'w', encoding='utf-8') as f:
+        for index, predicted_sentence in enumerate(predicted_sentences):
+            # calculate probabilities
+            commitee_prob = trigram_model_committee.calculate_prob_of_sentence(predicted_sentence)
+            plenary_prob = trigram_model_plenary.calculate_prob_of_sentence(predicted_sentence)
+
+            tokens = predicted_sentence.split()
+            f.write(f'original_sentence: {original_sens[index]}\n')
+            f.write(f'masked_sentence: {masked_sens[index]}\n')
+            f.write(f'plenary_sentence: {predicted_sentence}\n')
+            f.write(f'plenary_tokens: {tokens}\n')
+            f.write(f'probability of plenary sentence in plenary corpus: {plenary_prob:.2f}\n')
+            f.write(f'probability of plenary sentence in committee corpus: {commitee_prob:.2f}\n')
+            f.write("\n")
+    print("Prediction results written to file")
+
+    print("----- Perplexity section -----")
+    result_perplexity_path = "result_perplexity.txt"
+
+    average_perplexity = compute_average_perplexity(masked_sens, original_sens, trigram_model_plenary)
+
+    with open(result_perplexity_path, 'w', encoding='utf-8') as f:
+        f.write(f"{average_perplexity:.2f}\n")
+
+    print(f"average perplexity written to {result_perplexity_path}")
 
 if __name__ == "__main__":
     main()

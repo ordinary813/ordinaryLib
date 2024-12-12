@@ -1,0 +1,70 @@
+original_sentence: דיברנו על כך שזה יידון , ובסופו של דבר לא דנו על זה .
+masked_sentence: דיברנו על כך שזה יידון , ובסופו של דבר [*] דנו על זה .
+plenary_sentence: דיברנו על כך שזה יידון , ובסופו של דבר , דנו על זה .
+plenary_tokens: ['דיברנו', 'על', 'כך', 'שזה', 'יידון', ',', 'ובסופו', 'של', 'דבר', ',', 'דנו', 'על', 'זה', '.']
+probability of plenary sentence in plenary corpus: -106.48
+probability of plenary sentence in committee corpus: -103.01
+
+original_sentence: מדובר בילדים בני שש ושבע .
+masked_sentence: מדובר בילדים [*] שש ושבע .
+plenary_sentence: מדובר בילדים , שש ושבע .
+plenary_tokens: ['מדובר', 'בילדים', ',', 'שש', 'ושבע', '.']
+probability of plenary sentence in plenary corpus: -52.51
+probability of plenary sentence in committee corpus: -50.85
+
+original_sentence: אם היא לא מצליחה לגבות את זה , אז זה נשאר אצל העיריה ?
+masked_sentence: אם היא לא מצליחה לגבות את זה , אז זה [*] אצל העיריה ?
+plenary_sentence: אם היא לא מצליחה לגבות את זה , אז זה , אצל העיריה ?
+plenary_tokens: ['אם', 'היא', 'לא', 'מצליחה', 'לגבות', 'את', 'זה', ',', 'אז', 'זה', ',', 'אצל', 'העיריה', '?']
+probability of plenary sentence in plenary corpus: -106.76
+probability of plenary sentence in committee corpus: -100.23
+
+original_sentence: גם פה אנחנו תקועים בנושא של מטפלים , תורי המתנה וכו ' .
+masked_sentence: גם פה אנחנו תקועים בנושא [*] מטפלים , תורי המתנה וכו ' .
+plenary_sentence: גם פה אנחנו תקועים בנושא , מטפלים , תורי המתנה וכו ' .
+plenary_tokens: ['גם', 'פה', 'אנחנו', 'תקועים', 'בנושא', ',', 'מטפלים', ',', 'תורי', 'המתנה', 'וכו', "'", '.']
+probability of plenary sentence in plenary corpus: -110.68
+probability of plenary sentence in committee corpus: -104.31
+
+original_sentence: אם אין לו סמכות אז איך יש לו חובה ?
+masked_sentence: אם אין [*] סמכות אז איך יש לו חובה ?
+plenary_sentence: אם אין , סמכות אז איך יש לו חובה ?
+plenary_tokens: ['אם', 'אין', ',', 'סמכות', 'אז', 'איך', 'יש', 'לו', 'חובה', '?']
+probability of plenary sentence in plenary corpus: -83.64
+probability of plenary sentence in committee corpus: -79.10
+
+original_sentence: אני מודה לכם , ישיבת ועדת הכספים נעולה .
+masked_sentence: אני מודה לכם , [*] ועדת הכספים נעולה .
+plenary_sentence: אני מודה לכם , , ועדת הכספים נעולה .
+plenary_tokens: ['אני', 'מודה', 'לכם', ',', ',', 'ועדת', 'הכספים', 'נעולה', '.']
+probability of plenary sentence in plenary corpus: -64.44
+probability of plenary sentence in committee corpus: -65.26
+
+original_sentence: איתי עצמון : אדוני , אני רק רוצה להבין מה החלטת הוועדה כדי שאני אדע מה לכתוב בהצעת החוק .
+masked_sentence: איתי עצמון : אדוני , אני רק רוצה להבין מה החלטת [*] כדי שאני [*] מה לכתוב בהצעת החוק .
+plenary_sentence: איתי עצמון : אדוני , אני רק רוצה להבין מה החלטת , כדי שאני , מה לכתוב בהצעת החוק .
+plenary_tokens: ['איתי', 'עצמון', ':', 'אדוני', ',', 'אני', 'רק', 'רוצה', 'להבין', 'מה', 'החלטת', ',', 'כדי', 'שאני', ',', 'מה', 'לכתוב', 'בהצעת', 'החוק', '.']
+probability of plenary sentence in plenary corpus: -156.24
+probability of plenary sentence in committee corpus: -146.98
+
+original_sentence: כן מדובר כאן על אותו מבנה של הבית .
+masked_sentence: כן מדובר כאן על [*] מבנה של הבית .
+plenary_sentence: כן מדובר כאן על , מבנה של הבית .
+plenary_tokens: ['כן', 'מדובר', 'כאן', 'על', ',', 'מבנה', 'של', 'הבית', '.']
+probability of plenary sentence in plenary corpus: -71.03
+probability of plenary sentence in committee corpus: -69.67
+
+original_sentence: זה דורש הכשרה ממושכת , זה דורש הרבה מאוד הכנה .
+masked_sentence: זה דורש הכשרה ממושכת , זה דורש [*] מאוד הכנה .
+plenary_sentence: זה דורש הכשרה ממושכת , זה דורש , מאוד הכנה .
+plenary_tokens: ['זה', 'דורש', 'הכשרה', 'ממושכת', ',', 'זה', 'דורש', ',', 'מאוד', 'הכנה', '.']
+probability of plenary sentence in plenary corpus: -90.68
+probability of plenary sentence in committee corpus: -85.72
+
+original_sentence: תחליטו אם אתם רוצים להשאיר את זה כך או לנסח אחרת .
+masked_sentence: תחליטו אם אתם רוצים להשאיר [*] זה כך או לנסח אחרת .
+plenary_sentence: תחליטו אם אתם רוצים להשאיר , זה כך או לנסח אחרת .
+plenary_tokens: ['תחליטו', 'אם', 'אתם', 'רוצים', 'להשאיר', ',', 'זה', 'כך', 'או', 'לנסח', 'אחרת', '.']
+probability of plenary sentence in plenary corpus: -99.81
+probability of plenary sentence in committee corpus: -93.98
+
