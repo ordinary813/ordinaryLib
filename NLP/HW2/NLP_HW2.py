@@ -132,7 +132,7 @@ class Trigram_LM:
                 highest_prob = prob
                 best_token = token
 
-        return best_token, highest_prob
+        return best_token, log(highest_prob)
     
     
 
@@ -211,10 +211,7 @@ def get_k_n_t_collocations(corpus_df, k, n, t, type):
         tfidf_scores = {}
         collocation_counts = {}
 
-        print("\nProcessing protocols...")
-
         for protocol_name, collocations in grouped:
-            print(f"\rProcessing {protocol_name:<30}", end='', flush=True)
             # list of collocations for the current document/protocol
             doc_collocations = sum(collocations, [])
 
@@ -294,25 +291,25 @@ def to_word(n):
 
 def calculate_perplexity(trigram_model, original_sentence, masked_sentence, masked_indices):
     total_log_prob = 0
-    count = 0
+
+    masked_tokens = masked_sentence.split()
+    original_tokens = original_sentence.split()
 
     for index in masked_indices:
-        # split to corresponding tokens
-        masked_tokens = masked_sentence.split()
-        original_tokens = original_sentence.split()
-
         token = original_tokens[index]
-        context = " ".join(masked_tokens[max(0, index - 2):index])
+        context_tokens = original_tokens[max(0, index - 2):index]
+        context = " ".join(context_tokens)
 
-        prob = trigram_model.calculate_prob_of_sentence(f"{context} {token}") / (trigram_model.calculate_prob_of_sentence(context) + 1)
+        trigram_sentence = context + " " + token
 
-        if prob > 0:
-            total_log_prob += -log(prob)
-            count += 1
-        else:
-            print(f"masked sentence prob is 0 for index {index}")
+        log_prob = trigram_model.calculate_prob_of_sentence(trigram_sentence)
+        total_log_prob += log_prob
 
-    return math.exp(total_log_prob / count) if count > 0 else float('inf')
+    average_log_prob = total_log_prob / len(masked_indices)
+
+    perplexity = math.exp(-average_log_prob)
+    return perplexity
+
 
 
 def compute_average_perplexity(masked_sentences, original_sentences, trigram_model):
