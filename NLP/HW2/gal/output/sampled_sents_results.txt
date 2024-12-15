@@ -1,0 +1,70 @@
+original_sentence: לגבי מה שעוד ביקשנו בפעם שעברה , שיאושרו הסכמי השירות , לא קיבלנו על זה מענה .
+masked_sentence: לגבי מה שעוד ביקשנו [*] שעברה , שיאושרו הסכמי השירות , לא קיבלנו על זה מענה .
+plenary_sentence: לגבי מה שעוד ביקשנו , שעברה , שיאושרו הסכמי השירות , לא קיבלנו על זה מענה .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -219.45
+probability of plenary sentence in committee corpus: -207.05
+
+original_sentence: כשזה קורה בתוך המשפחה , קשה לאם להאמין שבעלה תקף מינית את בתם והרבה פעמים עצם הישיבה בבית המשפט , עצם שמיעת ההוכחות בבית המשפט מביאה את האם במקרה הזה או בני משפחה אחרים להכיר בכך שאכן הילד דובר אמת .
+masked_sentence: כשזה קורה בתוך המשפחה , קשה לאם להאמין שבעלה תקף מינית את בתם והרבה פעמים עצם הישיבה בבית המשפט [*] עצם שמיעת [*] בבית המשפט מביאה את [*] במקרה הזה או בני משפחה אחרים להכיר [*] שאכן הילד דובר אמת .
+plenary_sentence: כשזה קורה בתוך המשפחה , קשה לאם להאמין שבעלה תקף מינית את בתם והרבה פעמים עצם הישיבה בבית המשפט , עצם שמיעת , בבית המשפט מביאה את , במקרה הזה או בני משפחה אחרים להכיר , שאכן הילד דובר אמת .
+plenary_tokens: ,, ,, ,, ,
+probability of plenary sentence in plenary corpus: -544.44
+probability of plenary sentence in committee corpus: -517.40
+
+original_sentence: כפי שאני הבנתי ממך , זה לא המצב , אבל אני רציתי לבטא את זה עוד פעם ולשמוע שאין כל כוונה , אלא להיפך , לחזק את הרשות .
+masked_sentence: כפי שאני הבנתי ממך , זה לא המצב , אבל אני רציתי לבטא את זה עוד פעם ולשמוע [*] כל כוונה , אלא להיפך , לחזק [*] הרשות .
+plenary_sentence: כפי שאני הבנתי ממך , זה לא המצב , אבל אני רציתי לבטא את זה עוד פעם ולשמוע , כל כוונה , אלא להיפך , לחזק , הרשות .
+plenary_tokens: ,, ,
+probability of plenary sentence in plenary corpus: -346.42
+probability of plenary sentence in committee corpus: -334.07
+
+original_sentence: אוקיי , אז לא .
+masked_sentence: אוקיי , [*] לא .
+plenary_sentence: אוקיי , , לא .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -58.76
+probability of plenary sentence in committee corpus: -56.44
+
+original_sentence: תיכף נגיע לאיזונים של בעל תפקיד .
+masked_sentence: תיכף נגיע לאיזונים [*] בעל תפקיד .
+plenary_sentence: תיכף נגיע לאיזונים , בעל תפקיד .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -94.60
+probability of plenary sentence in committee corpus: -89.66
+
+original_sentence: אישית הוא לא הוזמן .
+masked_sentence: אישית [*] לא הוזמן .
+plenary_sentence: אישית , לא הוזמן .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -61.42
+probability of plenary sentence in committee corpus: -59.53
+
+original_sentence: גם אנחנו מתעמתים איתו , כולנו בחזיתות האלה .
+masked_sentence: גם אנחנו מתעמתים איתו , [*] בחזיתות האלה .
+plenary_sentence: גם אנחנו מתעמתים איתו , , בחזיתות האלה .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -118.35
+probability of plenary sentence in committee corpus: -112.07
+
+original_sentence: אין כאן משהו תיאורטי אלא תשלומים בפועל .
+masked_sentence: אין [*] משהו תיאורטי אלא תשלומים בפועל .
+plenary_sentence: אין , משהו תיאורטי אלא תשלומים בפועל .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -106.03
+probability of plenary sentence in committee corpus: -101.13
+
+original_sentence: האם אנחנו לא עומדים בפני בעיה שאדם , אישה בדרך כלל , אינו מעוניין לחוות את החוויה פעם נוספת , ולכן הוא לא רוצה לחזור אל המהלך .
+masked_sentence: האם אנחנו לא עומדים בפני בעיה שאדם , אישה בדרך כלל , [*] מעוניין לחוות את החוויה פעם נוספת , ולכן הוא לא רוצה [*] אל המהלך .
+plenary_sentence: האם אנחנו לא עומדים בפני בעיה שאדם , אישה בדרך כלל , , מעוניין לחוות את החוויה פעם נוספת , ולכן הוא לא רוצה , אל המהלך .
+plenary_tokens: ,, ,
+probability of plenary sentence in plenary corpus: -348.12
+probability of plenary sentence in committee corpus: -336.81
+
+original_sentence: פרק אחד עוסק במקומות ציבוריים ישנים , שלעניין הזה שר המשפטים יתקין תקנות בדבר אופן ההנגשה .
+masked_sentence: פרק אחד עוסק במקומות ציבוריים [*] , שלעניין הזה שר המשפטים יתקין תקנות בדבר אופן ההנגשה .
+plenary_sentence: פרק אחד עוסק במקומות ציבוריים , , שלעניין הזה שר המשפטים יתקין תקנות בדבר אופן ההנגשה .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -226.78
+probability of plenary sentence in committee corpus: -219.03
+

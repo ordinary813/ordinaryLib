@@ -1,308 +1,328 @@
-import argparse
-from docx import Document
 import os
-import re
-import json
 import pandas as pd
+from docx import Document
+import re
+import argparse
+import json
+
+# Map Hebrew numbers to integer values for words
+hebrew_numbers = {
+    "אחד": 1, "אחת": 1, "שתיים": 2, "שנים": 2, "שניים": 2, "שתים": 2, "שלוש": 3, "ארבע": 4, "חמש": 5, "שש": 6,
+    "שבע": 7, "שמונה": 8, "תשע": 9, "עשר": 10, "עשרים": 20,
+    "שלושים": 30, "ארבעים": 40, "חמישים": 50, "שישים": 60, "שבעים": 70, "שמונים": 80, "תשעים": 90,
+    "מאה": 100, "מאתיים": 200, "אלף": 1000, "אלפיים": 2000
+}
+
 
 def hebrew_to_number(hebrew_text):
-    hebrew_numerals = {
-        "אחד": 1, "שתיים": 2, "שלוש": 3, "ארבע": 4, "חמש": 5,
-        "שש": 6, "שבע": 7, "שמונה": 8, "תשע": 9, "עשר": 10,
-        "עשרים": 20, "שלושים": 30, "ארבעים": 40, "חמישים": 50,
-        "שישים": 60, "שבעים": 70, "שמונים": 80, "תשעים": 90,
-        "מאה": 100, "מאתיים": 200
-    }
-
-    suffixes = {
-        "מאות": 100, "עשרה" : 10
-    }
+    # Remove leading "ה", "ו" and "-" characters if present
+    parts = hebrew_text.split('-')
+    for i in range(len(parts)):
+        parts[i] = parts[i].lstrip("ה").lstrip("ו")
 
     total = 0
-    parts = re.split(r'-', hebrew_text)
-    # by now we should have an array of the hebrew numbers/suffixes
+    i = 0
 
-    for i, part in enumerate(parts):
-        part = part.strip()
-        
-        if part.startswith('ו'):
-            part = part[1:]
+    while i < len(parts):
+        part = parts[i]
 
-        if part in hebrew_numerals:
-            if i + 1 < len(parts) and parts[i+1] in suffixes:
-                if parts[i+1] == "מאות":
-                    total += hebrew_numerals[part] * suffixes[parts[i+1]]
-                elif parts[i+1] == "עשרה":
-                    total += hebrew_numerals[part] + suffixes[parts[i+1]]
-                continue
+        # Handle cases for number terms (like "חמש", "שלוש")
+        if part in hebrew_numbers:
+            # Handle "עשרה" as part of a number (e.g., "חמש עשרה" -> 15)
+            if i + 1 < len(parts) and (parts[i + 1] == "עשרה" or parts[i + 1] == "עשר"):
+                total += hebrew_numbers[part] + 10  # Add 10 to the number
+                i += 1  # Skip over "עשרה"
+            # Handle "מאות" (hundreds)
+            elif i + 1 < len(parts) and parts[i + 1] == "מאות":
+                total += hebrew_numbers[part] * 100  # Multiply by 100
+                i += 1  # Skip over "מאות"
             else:
-                total += hebrew_numerals[part]
-                
+                total += hebrew_numbers[part]  # Add regular number
+        i += 1  # Move to the next part
+
     return total
 
-def parse_protocol_metadata(file_path):
-    filename = file_path.split('/')[-1]
 
-    ## knesset num ##
-    knesset_num = filename.split('_')[0]
-    knesset_num = knesset_num.split('\\')[-1]
+class Protocol:
+    def __init__(self, file_name, file_path):
+        # Initialize with details extracted from the file name
+        self.file_path = file_path
+        self.file_name = file_name
+        self.kneset_number = self.extract_kneset_num(file_name)
+        self.protocol_type = self.extract_protocol_type(file_name)
+        self.protocol_text = self.load_document(file_path)
+        self.protocol_number = self.extract_protocol_number()
+        self.speaker_data = self.extract_speaker_data()
 
-    ## type ##
-    if filename.split('_')[1][2] == 'm':
-        protocol_type = 'plenary'
-    elif filename.split('_')[1][2] == 'v':
-        protocol_type = 'committee'
-
-    ## protocol number ##
-    protocol_number = -1
-
-    document = Document(file_path)
-    lines = [para.text for para in document.paragraphs]
-
-    for line in lines[:500]:
-        if "פרוטוקול מס'" in line:
-            match = re.search(r"פרוטוקול מס'\s*(\d+)", line)
-            if match:
-                protocol_number = match.group(1)
-        if re.search(r"הישיבה ה.*? של הכנסת ה.*", line):
-            match = re.search(r"הישיבה ה(.*?) של", line)           # get the hebrew number only
-            hebrew_number = match.group(1).strip()                  # extract the text
-            protocol_number = hebrew_to_number(hebrew_number)       # use a function to determine the number
-    
-    return knesset_num, protocol_type, protocol_number
-
-def clean_speaker_name(raw_name):
-    prefixes_to_remove = [
-        r'היו"ר', r'יו"ר', r'ח"כ', r'ד"ר', r'פרופ\'', r'עו"ד', 
-        r'נצ"מ', r'ניצב',
-        r'מר', r'גברת',
-        r'שר', r'שרת', r'השר', r'השרה',
-        r'סגן', r'סגנית',
-        r'הבינוי והשיכון',
-        r'העבודה הרווחה והשירותים החברתיים',
-        r'האוצר',
-        r'התעשייה והמסחר',
-        r'החינוך',
-        r'מזכיר המדינה', r'מזכירת המדינה',
-        r'מזכיר הכנסת', r'מזכירת הכנסת',
-        r'התחבורה',
-        r'הפנים',
-        r'המשפטים',
-        r'והתרבות',
-        r'הכלכלה והתכנון',
-        r'לביטחון פנים',
-        r'לביטחון',
-        r'הבריאות',
-        r'דובר_המשך',
-        r'העבודה, הרווחה והשירותים החברתיים',
-        r'התשתיות הלאומיות, האנרגיה והמים',
-        r'לאיכות הסביבה',
-        r', התרבות והספורט',
-        r'העבודה והרווחה',
-        r'תשובת', r'תשובה',
-        r'התקשורת',
-        r'במשרד ראש הממשלה',
-        r'המדע, התרבות והספורט',
-        r'התיירות',
-        r'התעשייה, המסחר והתעסוקה',
-        r'נשיא הפרלמנט האירופי',
-        r'התשתיות הלאומיות',
-        r'החקלאות ופיתוח הכפר',
-        r'המדע והטכנולוגיה',
-        r'לקליטת העלייה',
-        r'התשתיות',
-        r'מ"מ',
-        r'ועדת העבודה, הרווחה והבריאות',
-        r'והבטיחות בדרכים',
-        r'ראש הממשלה',
-        r'המשנה לראש הממשלה',
-        r'הביטחון',
-        r'להגנת הסביבה',
-        r'הכנסת',
-        r'לנושאים אסטרטגיים ולענייני מודיעין',
-        r'לאזרחים ותיקים',
-        r'המודיעין',
-        r'הכלכלה',
-        r'החקלאות'      
-    ]
-
-    # prefix patterns to remove
-    prefix_pattern = r'\b(?:' + r'|'.join(prefixes_to_remove) + r')\b'
-
-    cleaned_name = re.sub(r'\(.*?\)', '', raw_name)
-    cleaned_name = re.sub(prefix_pattern, '', cleaned_name)
-    cleaned_name = re.sub(r'<.*?>', '', cleaned_name)
-    cleaned_name = cleaned_name.replace("<","").replace(">","").strip()
-    return cleaned_name
-
-def extract_sentences(file_path):
-    data = []
-    found_first_speaker = False
-
-    doc = Document(file_path)
-    speaker = None
-    speech = []
-
-    for para in doc.paragraphs:
-        if(not found_first_speaker):    # discussion has not begun
-            # check if the current line is underlined
+    def extract_kneset_num(self, file_name):
+        underscore_index = file_name.find("_")
+        if underscore_index != -1:
             try:
-                is_underlined = (
-                    para.style.font.underline or 
-                    (para.style.base_style and para.style.base_style.font.underline) or 
-                    (para.runs and para.runs[0].underline)
-                )
-            except AttributeError:
-                is_underlined = False
-            
-            # if the current line is underlined, has "היו"ר" and a colon, 
-            if(is_underlined and 
-               (re.search(r'היו"ר .*:', para.text) or
-                re.search(r'היו”ר .*:', para.text) or
-                re.search(r'יו"ר .*:', para.text) or
-                re.search(r'יו”ר .*:', para.text) or
-                # This case occurs once in the files so we used this specific case
-                ('16_ptv_577758' in file_path and re.search(r'שלמי גולדברג .*:', para.text)))
-               ):
-                match = re.match(r'(.*?):\s*(.*)', para.text)
+                kneset_number = int(file_name[:underscore_index])
+                return kneset_number
+            except Exception as e:
+                print(f"Cannot find Knesset number in '{file_name}'")
+        return -1
+
+    def extract_protocol_type(self, file_name):
+        underscore_index = file_name.rfind("_")  # last underscore
+        if underscore_index != -1 and underscore_index > 0:
+            try:
+                protocol_type = file_name[underscore_index - 1:underscore_index]
+                if protocol_type == "m":
+                    return "plenary"
+                if protocol_type == "v":
+                    return "committee"
+            except Exception as e:
+                print(f"Error while extracting protocol type from '{file_name}'")
+        return ""
+
+    def load_document(self, file_path):
+        try:
+            doc = Document(file_path)
+            return doc
+        except Exception as e:
+            print(f"Error loading document '{file_path}'")
+        return ""
+
+    def extract_protocol_number(self):
+        protocol_number = -1
+
+        # First check if it's a "committee" protocol
+        if self.protocol_type == "committee":
+            protocol_number = self.extract_committee_protocol_number()
+
+        # If it's a "plenary" protocol, extract using a different term
+        elif self.protocol_type == "plenary":
+            protocol_number = self.extract_plenary_protocol_number()
+
+        return protocol_number
+
+    def extract_committee_protocol_number(self):
+        # Look for the term "'פרוטוקול מס'" and the number after it
+        protocol_number = -1
+        for para in self.protocol_text.paragraphs:
+            if "פרוטוקול מס" in para.text:
+                # find the number after "פרוטוקול מס'"
+                match = re.search(r"פרוטוקול מס'\s*(\d+)", para.text)
                 if match:
-                    speaker = match.group(1).strip()
-                    speaker = clean_speaker_name(speaker)
-                    speech = [re.sub(r'<<.*?>>', '', match.group(2)).replace("<","").replace(">","").strip()]
-                    if speech != ['']:
-                        data.append({"speaker_name": speaker, "sentence_text": " ".join(speech)})
-                found_first_speaker = True
+                    protocol_number = int(match.group(1))  # convert the number to an integer
+                    break
+        return protocol_number
+
+    def extract_plenary_protocol_number(self):
+        # Look for the word "הכנסת" and extract the Hebrew number after it
+        for para in self.protocol_text.paragraphs:
+            if "הכנסת" in para.text:
+                # Find the Hebrew number after "הכנסת"
+                match = re.search(r"הישיבה\s+([^\s]+(?:-[^\s]+)*)\s+של הכנסת", para.text)
+                if match:
+                    hebrew_text = match.group(1)  # Extract the Hebrew number
+                    return hebrew_to_number(hebrew_text)  # Convert Hebrew number to integer
+        return -1
+
+    def extract_speaker_data(self):
+        document = self.protocol_text
+        collected_speakers = []
+        speaker_name, accumulated_text = None, ""
+
+        for para in document.paragraphs:
+            # Skip centered text and end of meeting
+            if para.alignment == 1 or (para.style and para.style.name == 'Heading 1'):
                 continue
-        else:                           # discussion has begun
-            if(para.alignment == 1):    # 1:centered  
-                continue                # skip centered paragraphs (titles, votes etc...)
-            
             if "הישיבה ננעלה בשעה" in para.text:
                 break
-            # check if the current line is underlined
-            try:
-                is_underlined = (
-                    para.style.font.underline or 
-                    (para.style.base_style and para.style.base_style.font.underline) or 
-                    (para.runs and para.runs[0].underline)
-                )
-            except AttributeError:
-                is_underlined = False
 
-            if ":" in para.text and is_underlined:      # potential speaker
-                match = re.match(r'(.*?):\s*(.*)', para.text)
-                if match:
-                    if speaker and speech != ['']:
-                        data.append({"speaker_name": speaker, "sentence_text": " ".join(speech)})
-                        speech = []
-                    
-                    # update the speaker and speech
-                    speaker = match.group(1).strip()
-                    speaker = clean_speaker_name(speaker)
-                    if speech != ['']:
-                        speech.append(re.sub(r'<<.*?>>', '', match.group(2)).replace("<","").replace(">","").strip())
-            elif speaker and speech:
-                text = para.text.replace("<","").replace(">","").strip()
-                if text:
-                    speech.append(text)
-    
-    if speaker:
-        data.append({"speaker_name": speaker, "sentence_text": " ".join(speech)})
-    
-    return data
+            # Remove brackets and marks from speaker name
+            if re.search(r'<<[^>]+>>', para.text):
+                para.text = re.sub(r'<<[^>]+>>', '', para.text).strip()
+
+            if re.search(r'<[^>]+:>', para.text):
+                para.text = re.sub(r'<(.*?)>', r'\1', para.text).strip()
+
+            if self.protocol_type == 'plenary':  # ptm protocol
+                if para.runs and (
+                        (para.style and para.style.base_style and para.style.base_style.font.underline) or
+                        (para.style and para.style.font.underline)
+                ) and (
+                        (para.style and para.style.base_style and para.style.base_style.font.bold) or
+                        (para.style and para.style.font.bold)
+                ) and (para.runs[-1].text == ':' or para.text.endswith(':')):
+
+                    # Store the previous speaker and text if already exist
+                    if speaker_name:
+                        collected_speakers.append((speaker_name, accumulated_text.strip()))
+
+                    # Process new speaker
+                    speaker_name = para.text.replace(":", "").strip()
+                    speaker_name = re.sub(r'\([^)]*\)', '', speaker_name).strip()
+                    if len(speaker_name.split()) <= 1:
+                        speaker_name = None
+                        continue
+                    speaker_name = " ".join(speaker_name.split()[-2:])  # Save only the last two words to avoid roles
+                    accumulated_text = ""
+                else:
+                    # Accumulate text for the current speaker
+                    if para.runs and not (
+                            (para.style and para.style.base_style and para.style.base_style.font.underline) or
+                            (para.style and para.style.font.underline)):
+                        accumulated_text += para.text
+
+            else:  # committee protocol type (ptv)
+                if ((para.runs and (para.runs[-1].text == ':' or para.text.endswith(':'))) and
+                    (para.runs[0].underline or (para.style and para.style.font and para.style.font.underline))
+                ) or (para.style and para.style.base_style and para.style.base_style.font.underline):
+                    # Store the previous speaker and text if already exist
+                    if speaker_name:
+                        collected_speakers.append((speaker_name, accumulated_text.strip()))
+
+                    # Process new speaker
+                    speaker_name = para.text.replace(":", "").strip()
+                    speaker_name = re.sub(r'\([^)]*\)', '', speaker_name).strip()
+                    if len(speaker_name.split()) <= 1:
+                        speaker_name = None
+                        continue
+                    speaker_name = " ".join(speaker_name.split()[-2:])  # Save only the last two words to avoid roles
+                    accumulated_text = ""
+                else:
+                    # Accumulate text for the current speaker
+                    if para.runs and not (
+                            (para.style and para.style.base_style and para.style.base_style.font.underline) or
+                            (para.style and para.style.font.underline)):
+                        accumulated_text += para.text
+
+        # Add the last speaker and text to the list
+        accumulated_text \
+            = re.sub(r'<(.*?)>', '', accumulated_text).strip()
+        if speaker_name:
+            collected_speakers.append((speaker_name, accumulated_text.strip()))
+
+        return collected_speakers
+
+
+def clean_and_tokenize_sentences(text):
+    # Pattern to match the end of a sentence (., !, ?)
+    sentence_pattern = re.compile(r'(?<=[.!?])\s*')
+
+    # Separate the text into sentences
+    sentences = sentence_pattern.split(text.strip())
+
+    # List to hold clean, tokenized sentences
+    tokenized_sentences = []
+
+    for sentence in sentences:
+        sentence = sentence.strip()
+
+        # Skip empty sentences
+        if not sentence:
+            continue
+
+        # exclude sentences with specific unwanted symbols (– – – or – –)
+        if "– – –" in sentence or "– –" in sentence:
+            continue
+
+        # exclude sentences with numbers
+        if re.search(r'[a-zA-Z]', sentence):
+            continue
+        
+        sentence = clean_sentence(sentence)
+        # Tokenize the sentence
+        tokens = tokenize_sentence(sentence)
+
+        # Only include sentences with at least 4 tokens
+        if len(tokens) >= 4:
+            tokenized_sentences.append(tokens)
+
+    return tokenized_sentences
+
 
 def tokenize_sentence(sentence):
-    pattern = r'[א-ת]+|\d+|[.,!?;:\-\']'
-    return re.findall(pattern, sentence)
+    pattern = r"""
+        \d{1,2}[-/]\d{1,2}[-/]\d{2,4}        # Dates like 22/12/1992 or 12-05-21
+        | \b(?:[A-Za-z]\.){2,}[A-Za-z]?      # English abbreviations like U.S.A., e.g.
+        | \b[א-ת]+(?:'[\w"]+)?               # Hebrew abbreviations like ח"כ, היו"ר
+        | \b[א-ת]'(?:\s?[א-ת]+)?            # Hebrew short names like ח' גולדשטיין
+        | \b[א-ת]+\b                         # Hebrew words
+        | \d+                                # Numbers
+        | [.,!?;:\-\']                       # Punctuation
+    """
+    return re.findall(pattern, sentence, re.VERBOSE)
 
-def produce_corpus(dir_path, write_to_txt = False):
-    df = pd.DataFrame(columns=[ "protocol_name",
-                                "knesset_number", 
-                                "protocol_type", 
-                                "protocol_number", 
-                                "speaker_name", 
-                                "sentence_text"
-                                ])
+def clean_sentence(sentence):
+    # Remove extra spaces before punctuation
+    sentence = re.sub(r'\s+([.,!?])', r'\1', sentence)
+    # Ensure the sentence ends with a word followed by a dot
+    sentence = re.sub(r'\s+\.', '.', sentence.strip())
+    return sentence
+
+
+
+
+def produce_corpus(dir_path, write_to_txt=False):
+    df = pd.DataFrame(columns=["protocol_name",
+                               "knesset_number",
+                               "protocol_type",
+                               "protocol_number",
+                               "speaker_name",
+                               "sentence_text"
+                               ])
     docx_count = 0
     docx_processed = 0
 
     for _, _, files in os.walk(dir_path):
-        for file in files:    
+        for file in files:
             if file.endswith('.docx'):
                 docx_count += 1
 
     print(f"{docx_processed}/{docx_count} docx files processed.", end='\r')
-    
-    # extracting speeches
+
     for curr_file in os.listdir(dir_path):
         if curr_file.endswith('.docx'):
             file_path = os.path.join(dir_path, os.fsdecode(curr_file))
-            knesset_num, protocol_type, protocol_num = parse_protocol_metadata(file_path)
-            data = extract_sentences(file_path)
+            protocol = Protocol(curr_file, file_path)
+            data = protocol.speaker_data
 
+            # Convert tuples to dictionaries
+            data = [{"speaker_name": speaker_name, "sentence_text": accumulated_text} for speaker_name, accumulated_text
+                    in data]
+
+            # Add additional protocol information to each entry
             for entry in data:
                 entry["protocol_name"] = curr_file
-                entry["knesset_number"] = knesset_num
-                entry["protocol_type"] = protocol_type
-                entry["protocol_number"] = protocol_num
-            
+                entry["knesset_number"] = protocol.kneset_number
+                entry["protocol_type"] = protocol.protocol_type
+                entry["protocol_number"] = protocol.protocol_number
+
             temp_df = pd.DataFrame(data)
 
             # sentences tokenization
             expanded_data = []
             for _, row in temp_df.iterrows():
                 speech = row["sentence_text"]
-                sentences = re.split(r'[.!?]', speech)
+                tokenized_sentences = clean_and_tokenize_sentences(speech)
 
-                full_sentences = [
-                    sentences[i].strip() + sentences[i + 1]
-                    for i in range(0, len(sentences) - 1, 2)
-                ]
-
-                
-                for sentence in full_sentences:
-                    sentence = sentence.strip()
-                    if not sentence:
-                        continue
-                    if "– – –" in sentence or "– –" in sentence:
-                        continue
-                    if re.search(r'[a-zA-Z]', sentence):                      #exclude sentences with numbers
-                        continue
-                    tokens = tokenize_sentence(sentence)
-                    
-                    if len(tokens) >= 4:
-                        new_entry = row.to_dict()
-                        new_entry["sentence_text"] = sentence
-                        expanded_data.append(new_entry)
+                # For each tokenized sentence, create a new entry
+                for tokens in tokenized_sentences:
+                    new_entry = row.to_dict()
+                    new_entry["sentence_text"] = " ".join(tokens)  # Convert tokens back into sentence string
+                    expanded_data.append(new_entry)
 
             expanded_df = pd.DataFrame(expanded_data)
             df = pd.concat([df, expanded_df], ignore_index=True)
 
-            # DEBUG PURPOSES - write full texts to txt files
-            if write_to_txt:
-                output_file = os.path.splitext(curr_file)[0] + ".txt"
-                output_path = os.path.join("output", output_file)
-
-                with open(output_path, "w", encoding="utf-8") as f:
-                    f.write(f"Knesset Number: {knesset_num}\n")
-                    f.write(f"Type: {protocol_type}\n")
-                    f.write(f"Protocol Number: {protocol_num}\n\n")
-                    for entry in data:
-                        f.write(f"Speaker: {entry['speaker_name']}\n")
-                        f.write(f"Speech: {entry['sentence_text']}\n")
-                        f.write("\n")
-            
-            print(f"{docx_processed}/{docx_count} docx files processed.", end='\r', flush = True)
+            print(f"{docx_processed}/{docx_count} docx files processed.", end='\r', flush=True)
             docx_processed += 1
-    
-    print(f"All docx files processed.", flush = True)
+
+    print(f"All docx files processed.", flush=True)
     return df
+
 
 def save_dataframe_to_jsonl(df, output_path):
     with open(output_path, 'w', encoding='utf-8') as jsonl_file:
         for _, row in df.iterrows():
             json_object = row.to_dict()
             jsonl_file.write(f"{json.dumps(json_object, ensure_ascii=False)}\n")
+
 
 # to run the script in the command line, use the following syntax:
 # 'python processing_knesset_corpus.py <path/to/protocols> <path/to/output/file>'
@@ -319,22 +339,18 @@ def main():
         type=str,
         help="Path to the directory for the output JSONL."
     )
-    
+
     args = parser.parse_args()
-    
+
     dir_path = args.directory
     out_path = args.output_path
 
     print("Processing Protocols...")
     df = produce_corpus(dir_path, write_to_txt=True)
 
-    # write all names
-    with open("Speakers.txt", "w", encoding="utf-8") as f:
-        for name in df['speaker_name'].unique():
-            f.write(f"{name}\n")
-
     save_dataframe_to_jsonl(df, out_path)
     print(f"Corpus was saved to {out_path}.")
+
 
 if __name__ == "__main__":
     main()

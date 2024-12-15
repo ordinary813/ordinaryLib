@@ -1,12 +1,10 @@
 from collections import defaultdict
-import argparse
 import pandas as pd
 import random
 import os
-import re
-import json
 import math
 from math import log
+import argparse
 
 
 class Trigram_LM:
@@ -36,7 +34,7 @@ class Trigram_LM:
         for sentence in self.corpus['sentence_text']:
             tokens = sentence.split()  # Tokenize the sentence
 
-            # Generate n-grams dynamically based on n
+            # Generate n-grams based on n
             for i in range(len(tokens) - n + 1):
                 ngram = tuple(tokens[i:i + n])
                 ngram_dict[ngram] += 1
@@ -51,7 +49,7 @@ class Trigram_LM:
         # weights for the interpolation
         lambda_1 = 0.01
         lambda_2 = 0.01
-        lambda_3 = 0.099
+        lambda_3 = 0.99
 
         V = len(self.unigrams)  # number of unique words in the corpus
         unigram_frequencies = sum(self.unigrams.values())
@@ -176,20 +174,20 @@ class Trigram_LM:
         # produce all collocations of length n
         corpus_df['collocations'] = corpus_df['sentence_text'].apply(lambda x: self.generate_collocations_n(x, n))
 
-        # place all collocations in a dictionary of structure <Collocation>: <Count>
+        # place all collocations in a dictionary
         collocation_counts = {}
         for coll_list in corpus_df['collocations']:
             for coll in coll_list:
                 collocation_counts[coll] = collocation_counts.get(coll, 0) + 1
 
         if type == "frequency":
-            # only include collcations that appear more than <t>
+            # only include collcations that appear more than t
             filtered_collocations = {coll: count for coll, count in collocation_counts.items() if count >= t}
         elif type == "tfidf":
 
             total_docs = len(corpus_df['protocol_name'].unique())
 
-            # group by protocol docs
+            # group by protocol number
             grouped = corpus_df.groupby('protocol_name')['collocations']
             protocol_collocations = grouped.apply(lambda x: sum(x, []))
 
@@ -199,7 +197,7 @@ class Trigram_LM:
             collocation_counts = {}
 
             for protocol_name, collocations in grouped:
-                # list of collocations for the current document/protocol
+                # list of collocations for the current protocol
                 doc_collocations = sum(collocations, [])
 
                 for coll in doc_collocations:
@@ -207,7 +205,7 @@ class Trigram_LM:
 
                 tf_scores = self.compute_tf(doc_collocations)
 
-                # Compute TF-IDF for collocations in this document
+                # Compute TF-IDF for collocations in the protocol
                 tfidf = self.compute_tfidf(tf_scores, idf_scores)
 
                 for coll, score in tfidf.items():
@@ -250,17 +248,16 @@ def get_random_sentences(corpus_df, num_sentences=10, min_tokens=5):
 
 
 def write_ngram_collocations(model_committee, model_plenary, n, output_file):
-    # Get the top 10 frequency-based collocations
+    # Get the top 10 frequency collocations
     top_collocations_freq_committee = model_committee.get_k_n_t_collocations(10, n, 5, 'frequency')
     top_collocations_freq_plenary = model_plenary.get_k_n_t_collocations(10, n, 5, 'frequency')
 
-    # Get the top 10 TF-IDF-based collocations
+    # Get the top 10 tfidf collocations
     top_collocations_tfidf_committee = model_committee.get_k_n_t_collocations(10, n, 5, 'tfidf')
     top_collocations_tfidf_plenary = model_plenary.get_k_n_t_collocations(10, n, 5, 'tfidf')
 
     # Open the output file and write the collocations
     with open(output_file, 'a', encoding='utf-8') as f:
-        # Write n-gram header
         if n == 2:
             f.write("Two-gram collocations:\n")
         elif n == 3:
@@ -268,7 +265,6 @@ def write_ngram_collocations(model_committee, model_plenary, n, output_file):
         elif n == 4:
             f.write("Four-gram collocations:\n")
 
-        # Write Frequency section
         f.write("Frequency:\n")
 
         # Write "Committee corpus" section for Frequency
@@ -283,9 +279,8 @@ def write_ngram_collocations(model_committee, model_plenary, n, output_file):
         for ngram, count in top_collocations_freq_plenary:
             ngram_str = ''.join(ngram)
             f.write(f"{ngram_str}\n")
-        f.write("\n")  # Empty line after Plenary corpus
+        f.write("\n")
 
-        # Write TF-IDF section
         f.write("TF-IDF:\n")
 
         # Write "Committee corpus" section for TF-IDF
@@ -293,21 +288,21 @@ def write_ngram_collocations(model_committee, model_plenary, n, output_file):
         for ngram, count in top_collocations_tfidf_committee:
             ngram_str = ''.join(ngram)
             f.write(f"{ngram_str}\n")
-        f.write("\n")  # Empty line after Committee corpus
+        f.write("\n")
 
         # Write "Plenary corpus" section for TF-IDF
         f.write("Plenary corpus:\n")
         for ngram, count in top_collocations_tfidf_plenary:
             ngram_str = ''.join(ngram)
             f.write(f"{ngram_str}\n")
-        f.write("\n")  # Empty line after Plenary corpus
+        f.write("\n")
 
 def calculate_perplexity(masked_sentences, trigram_model_plenary):
 
-    sentence_perplexities = []  # List to store perplexity for each sentence
+    sentence_perplexities = []
 
     for sentence in masked_sentences:
-        # Identify the positions of the masked tokens
+        # positions of the masked tokens
         masked_token_positions = [i for i, token in enumerate(sentence.split()) if token == "[*]"]
 
         log_prob_sum = 0
@@ -317,7 +312,7 @@ def calculate_perplexity(masked_sentences, trigram_model_plenary):
         for idx in masked_token_positions:
             # Extract the context for the trigram (previous 2 tokens before the masked token)
             context = sentence.split()[idx - 2:idx]
-            # Predict the best token and its log probability using the trigram model
+            # Predict the best token and its log probability
             best_token, highest_log_prob = trigram_model_plenary.generate_next_token(" ".join(context))
 
             # Add the log probability of the predicted token
@@ -334,8 +329,6 @@ def calculate_perplexity(masked_sentences, trigram_model_plenary):
     return average_perplexity
 
 
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -349,7 +342,7 @@ if __name__ == '__main__':
         type=str,
         help="Path to the directory for the output files."
     )
-    
+
     args = parser.parse_args()
 
     corpus_path = args.path_to_corpus
@@ -373,8 +366,6 @@ if __name__ == '__main__':
     for n in [2, 3, 4]:
         write_ngram_collocations(trigram_model_committee, trigram_model_plenary, n, output_file)
 
-    # print("Top collocations written to file.")
-
     # --------part 3----------
 
     # Get 10 random sentences with at least 5 tokens
@@ -384,12 +375,12 @@ if __name__ == '__main__':
     masked_sentences = mask_tokens_in_sentences(selected_sentences, 10)
 
     # Output the original sentences
-    with open(os.path.join(out_dir, r"original_sampled_sents.txt") , 'w', encoding='utf-8') as f:
+    with open(os.path.join(out_dir, r"original_sampled_sents.txt"), 'w', encoding='utf-8') as f:
         for sentence in selected_sentences:
             f.write(sentence + '\n')
 
     # Output the masked sentences
-    with open(os.path.join(out_dir, r"masked_sampled_sents.txt") , 'w', encoding='utf-8') as f:
+    with open(os.path.join(out_dir, r"masked_sampled_sents.txt"), 'w', encoding='utf-8') as f:
         for sentence in masked_sentences:
             f.write(sentence + '\n')
 
@@ -412,7 +403,7 @@ if __name__ == '__main__':
 
                 # Add the predicted token to the updated sentence
 
-                updated_sentence += " " + best_token[0] + parts[i]
+                updated_sentence += best_token[0] + parts[i]
                 # Store the predicted token
                 predicted_tokens.append(best_token[0])
 
@@ -428,7 +419,6 @@ if __name__ == '__main__':
             result_file.write(f"probability of plenary sentence in plenary corpus: {plenary_prob:.2f}\n")
             result_file.write(f"probability of plenary sentence in committee corpus: {committee_prob:.2f}\n")
             result_file.write("\n")
-
 
     # Open the file to write perplexity results
     with open(os.path.join(out_dir, r"perplexity_result.txt"), 'w', encoding='utf-8') as result_file:
