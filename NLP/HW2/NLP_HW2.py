@@ -134,8 +134,6 @@ class Trigram_LM:
 
         return best_token, log(highest_prob)
     
-    
-
 def generate_ngrams(text, n):
         words = re.findall(r'\b\w+\b', text.lower())
         return [' '.join(words[i:i + n]) for i in range(len(words) - n + 1)]
@@ -156,7 +154,6 @@ def compute_idf(protocol_collocations, total_docs):
         idf_scores[collocation] = log(total_docs / (doc_count))
 
     return idf_scores
-
 
 def compute_tf(doc_collocations):
     total_count = len(doc_collocations)

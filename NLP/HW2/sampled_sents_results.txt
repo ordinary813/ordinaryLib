@@ -1,70 +1,70 @@
-original_sentence: אם זאת פרוצדורה , אין בעיה , נתנהל .
-masked_sentence: אם [*] פרוצדורה , אין בעיה , נתנהל .
-plenary_sentence: אם , פרוצדורה , אין בעיה , נתנהל .
-plenary_tokens: ['אם', ',', 'פרוצדורה', ',', 'אין', 'בעיה', ',', 'נתנהל', '.']
-probability of plenary sentence in plenary corpus: -65.64
-probability of plenary sentence in committee corpus: -63.47
+original_sentence: אתה מדבר על מקרה שאתה יכול להשעות אותו עד שיחכו .
+masked_sentence: [*] מדבר על מקרה שאתה יכול להשעות אותו עד שיחכו .
+plenary_sentence: , מדבר על מקרה שאתה יכול להשעות אותו עד שיחכו .
+plenary_tokens: [',', 'מדבר', 'על', 'מקרה', 'שאתה', 'יכול', 'להשעות', 'אותו', 'עד', 'שיחכו', '.']
+probability of plenary sentence in plenary corpus: -95.11
+probability of plenary sentence in committee corpus: -89.22
 
-original_sentence: אז מתוקף מה הוא סגור ?
-masked_sentence: [*] מתוקף מה הוא סגור ?
-plenary_sentence: , מתוקף מה הוא סגור ?
-plenary_tokens: [',', 'מתוקף', 'מה', 'הוא', 'סגור', '?']
-probability of plenary sentence in plenary corpus: -49.56
-probability of plenary sentence in committee corpus: -47.62
+original_sentence: אז אל תיתן 1 , 000 שקל יותר .
+masked_sentence: [*] אל תיתן 1 , 000 שקל יותר .
+plenary_sentence: , אל תיתן 1 , 000 שקל יותר .
+plenary_tokens: [',', 'אל', 'תיתן', '1', ',', '000', 'שקל', 'יותר', '.']
+probability of plenary sentence in plenary corpus: -63.86
+probability of plenary sentence in committee corpus: -64.21
 
-original_sentence: ממש בדקה אני אדגים לכם כאן עם איזה בקשות ונתונים אנחנו מתמודדים בסינון כדי שלא יהיה מצב שייכנסו לתוך שירות בתי הסוהר אנשים שגם מנסים להיכנס לשירותינו וקשורים לארגוני פשיעה או בעניינים ביטחוניים .
-masked_sentence: ממש בדקה אני אדגים לכם כאן עם איזה בקשות ונתונים אנחנו מתמודדים בסינון כדי [*] יהיה מצב שייכנסו [*] שירות בתי הסוהר אנשים שגם מנסים להיכנס לשירותינו וקשורים לארגוני פשיעה או [*] ביטחוניים .
-plenary_sentence: ממש בדקה אני אדגים לכם כאן עם איזה בקשות ונתונים אנחנו מתמודדים בסינון כדי , יהיה מצב שייכנסו , שירות בתי הסוהר אנשים שגם מנסים להיכנס לשירותינו וקשורים לארגוני פשיעה או , ביטחוניים .
-plenary_tokens: ['ממש', 'בדקה', 'אני', 'אדגים', 'לכם', 'כאן', 'עם', 'איזה', 'בקשות', 'ונתונים', 'אנחנו', 'מתמודדים', 'בסינון', 'כדי', ',', 'יהיה', 'מצב', 'שייכנסו', ',', 'שירות', 'בתי', 'הסוהר', 'אנשים', 'שגם', 'מנסים', 'להיכנס', 'לשירותינו', 'וקשורים', 'לארגוני', 'פשיעה', 'או', ',', 'ביטחוניים', '.']
-probability of plenary sentence in plenary corpus: -320.57
-probability of plenary sentence in committee corpus: -297.86
+original_sentence: הם אומרים שיש להם תאריך , והם הצביעו על השלבים שהם צריכים לעבור עד סוף יוני , כדי שלשיחות היזומות יהיה פתרון סוחף .
+masked_sentence: הם [*] שיש להם תאריך , והם הצביעו על השלבים שהם [*] לעבור עד סוף יוני , כדי שלשיחות היזומות יהיה פתרון סוחף .
+plenary_sentence: הם , שיש להם תאריך , והם הצביעו על השלבים שהם , לעבור עד סוף יוני , כדי שלשיחות היזומות יהיה פתרון סוחף .
+plenary_tokens: ['הם', ',', 'שיש', 'להם', 'תאריך', ',', 'והם', 'הצביעו', 'על', 'השלבים', 'שהם', ',', 'לעבור', 'עד', 'סוף', 'יוני', ',', 'כדי', 'שלשיחות', 'היזומות', 'יהיה', 'פתרון', 'סוחף', '.']
+probability of plenary sentence in plenary corpus: -205.89
+probability of plenary sentence in committee corpus: -195.94
 
-original_sentence: זאת הסיבה שעצרנו את הדיון .
-masked_sentence: זאת הסיבה שעצרנו [*] הדיון .
-plenary_sentence: זאת הסיבה שעצרנו , הדיון .
-plenary_tokens: ['זאת', 'הסיבה', 'שעצרנו', ',', 'הדיון', '.']
-probability of plenary sentence in plenary corpus: -50.23
-probability of plenary sentence in committee corpus: -47.65
+original_sentence: לא , זה היה שימוש לרעה .
+masked_sentence: [*] , זה היה שימוש לרעה .
+plenary_sentence: , , זה היה שימוש לרעה .
+plenary_tokens: [',', ',', 'זה', 'היה', 'שימוש', 'לרעה', '.']
+probability of plenary sentence in plenary corpus: -49.75
+probability of plenary sentence in committee corpus: -46.52
 
-original_sentence: כלפי מבוגרים תמיכה מוחלטת , גורפת .
-masked_sentence: כלפי מבוגרים תמיכה מוחלטת , גורפת [*]
-plenary_sentence: כלפי מבוגרים תמיכה מוחלטת , גורפת ,
-plenary_tokens: ['כלפי', 'מבוגרים', 'תמיכה', 'מוחלטת', ',', 'גורפת', ',']
-probability of plenary sentence in plenary corpus: -64.44
-probability of plenary sentence in committee corpus: -61.18
+original_sentence: אם אתם רוצים לדון כאופוזיציה - - -
+masked_sentence: אם אתם [*] לדון כאופוזיציה - - -
+plenary_sentence: אם אתם , לדון כאופוזיציה - - -
+plenary_tokens: ['אם', 'אתם', ',', 'לדון', 'כאופוזיציה', '-', '-', '-']
+probability of plenary sentence in plenary corpus: -58.16
+probability of plenary sentence in committee corpus: -55.63
 
-original_sentence: אוטומטית כל הסכם כזה הוא פגיעה מהותית בזכויותי .
-masked_sentence: [*] כל הסכם כזה הוא פגיעה מהותית בזכויותי .
-plenary_sentence: , כל הסכם כזה הוא פגיעה מהותית בזכויותי .
-plenary_tokens: [',', 'כל', 'הסכם', 'כזה', 'הוא', 'פגיעה', 'מהותית', 'בזכויותי', '.']
-probability of plenary sentence in plenary corpus: -77.47
-probability of plenary sentence in committee corpus: -72.43
+original_sentence: התקציב קוצץ מ - 26 ל - 15 מיליון , למען הדיוק .
+masked_sentence: התקציב קוצץ מ - [*] ל - 15 מיליון , למען הדיוק .
+plenary_sentence: התקציב קוצץ מ - ראש ל - 15 מיליון , למען הדיוק .
+plenary_tokens: ['התקציב', 'קוצץ', 'מ', '-', 'ראש', 'ל', '-', '15', 'מיליון', ',', 'למען', 'הדיוק', '.']
+probability of plenary sentence in plenary corpus: -103.49
+probability of plenary sentence in committee corpus: -101.94
 
-original_sentence: אנחנו מפעילים פרויקט שסיגל ואורי בוודאי מכירים אותו , של העמדת הלוואות לצורך סילוק אשראי , ביחד עם עמותות נוספות .
-masked_sentence: אנחנו מפעילים פרויקט שסיגל ואורי [*] מכירים אותו , [*] העמדת הלוואות לצורך סילוק אשראי , ביחד עם עמותות נוספות .
-plenary_sentence: אנחנו מפעילים פרויקט שסיגל ואורי , מכירים אותו , , העמדת הלוואות לצורך סילוק אשראי , ביחד עם עמותות נוספות .
-plenary_tokens: ['אנחנו', 'מפעילים', 'פרויקט', 'שסיגל', 'ואורי', ',', 'מכירים', 'אותו', ',', ',', 'העמדת', 'הלוואות', 'לצורך', 'סילוק', 'אשראי', ',', 'ביחד', 'עם', 'עמותות', 'נוספות', '.']
-probability of plenary sentence in plenary corpus: -191.51
-probability of plenary sentence in committee corpus: -179.81
+original_sentence: אנחנו מסתכלים על זה מעט אחרת , אנחנו מקבלים צורך ומתאימים לו מענה .
+masked_sentence: אנחנו מסתכלים על זה מעט אחרת , אנחנו מקבלים [*] ומתאימים לו מענה .
+plenary_sentence: אנחנו מסתכלים על זה מעט אחרת , אנחנו מקבלים , ומתאימים לו מענה .
+plenary_tokens: ['אנחנו', 'מסתכלים', 'על', 'זה', 'מעט', 'אחרת', ',', 'אנחנו', 'מקבלים', ',', 'ומתאימים', 'לו', 'מענה', '.']
+probability of plenary sentence in plenary corpus: -113.71
+probability of plenary sentence in committee corpus: -106.99
 
-original_sentence: כאן מדובר בהליך של המשפט החוקתי הפנימי של מדינת ישראל , ומשתלבים בתוכו היבטים של המשפט הבין - לאומי .
-masked_sentence: כאן מדובר בהליך של המשפט החוקתי הפנימי של מדינת [*] , ומשתלבים [*] היבטים של המשפט הבין - לאומי .
-plenary_sentence: כאן מדובר בהליך של המשפט החוקתי הפנימי של מדינת , , ומשתלבים , היבטים של המשפט הבין - לאומי .
-plenary_tokens: ['כאן', 'מדובר', 'בהליך', 'של', 'המשפט', 'החוקתי', 'הפנימי', 'של', 'מדינת', ',', ',', 'ומשתלבים', ',', 'היבטים', 'של', 'המשפט', 'הבין', '-', 'לאומי', '.']
-probability of plenary sentence in plenary corpus: -163.32
-probability of plenary sentence in committee corpus: -155.96
+original_sentence: העובדים שעובדים היום במתנ " ס , נמצא פה מנהל המתנ " ס , הוא היה גם קודם לכן , יכול להעיד מקבלים את שכרם ב - 1 לחודש , לא ב - 10 , לא ב - 09 , ולא ב - 20 לחודש שלאחר כך כמו שהיה קודם לכן , מקבלים ב - 1 לחודש את שכרם .
+masked_sentence: העובדים שעובדים היום במתנ " ס , נמצא [*] מנהל המתנ " ס , [*] היה גם קודם לכן , יכול להעיד מקבלים את שכרם ב - 1 לחודש , לא ב - 10 [*] לא ב - 09 [*] ולא ב - 20 לחודש [*] כך כמו שהיה קודם לכן , מקבלים ב - 1 לחודש את [*] .
+plenary_sentence: העובדים שעובדים היום במתנ " ס , נמצא , מנהל המתנ " ס , , היה גם קודם לכן , יכול להעיד מקבלים את שכרם ב - 1 לחודש , לא ב - 10 , לא ב - 09 , ולא ב - 20 לחודש , כך כמו שהיה קודם לכן , מקבלים ב - 1 לחודש את , .
+plenary_tokens: ['העובדים', 'שעובדים', 'היום', 'במתנ', '"', 'ס', ',', 'נמצא', ',', 'מנהל', 'המתנ', '"', 'ס', ',', ',', 'היה', 'גם', 'קודם', 'לכן', ',', 'יכול', 'להעיד', 'מקבלים', 'את', 'שכרם', 'ב', '-', '1', 'לחודש', ',', 'לא', 'ב', '-', '10', ',', 'לא', 'ב', '-', '09', ',', 'ולא', 'ב', '-', '20', 'לחודש', ',', 'כך', 'כמו', 'שהיה', 'קודם', 'לכן', ',', 'מקבלים', 'ב', '-', '1', 'לחודש', 'את', ',', '.']
+probability of plenary sentence in plenary corpus: -463.91
+probability of plenary sentence in committee corpus: -447.32
 
-original_sentence: זה לא קיים בתל - אביב , זה לא קיים בירושלים וזה לא קיים במקומות אחרים אלא זה קיים אך ורק בהתיישבות העובדת .
-masked_sentence: זה לא קיים בתל - אביב , זה לא קיים [*] וזה [*] קיים במקומות אחרים אלא זה קיים אך ורק בהתיישבות העובדת .
-plenary_sentence: זה לא קיים בתל - אביב , זה לא קיים , וזה , קיים במקומות אחרים אלא זה קיים אך ורק בהתיישבות העובדת .
-plenary_tokens: ['זה', 'לא', 'קיים', 'בתל', '-', 'אביב', ',', 'זה', 'לא', 'קיים', ',', 'וזה', ',', 'קיים', 'במקומות', 'אחרים', 'אלא', 'זה', 'קיים', 'אך', 'ורק', 'בהתיישבות', 'העובדת', '.']
-probability of plenary sentence in plenary corpus: -188.92
-probability of plenary sentence in committee corpus: -182.43
+original_sentence: אף אחד עדיין לא חותם .
+masked_sentence: אף [*] עדיין לא חותם .
+plenary_sentence: אף , עדיין לא חותם .
+plenary_tokens: ['אף', ',', 'עדיין', 'לא', 'חותם', '.']
+probability of plenary sentence in plenary corpus: -46.22
+probability of plenary sentence in committee corpus: -44.95
 
-original_sentence: אתם זוכרים שבכנסת הקודמת נחקק החוק נגד חקיקה פרטית בטענה שצריך לעצור את החקיקה הפופוליסטית .
-masked_sentence: אתם זוכרים שבכנסת הקודמת נחקק החוק נגד חקיקה [*] בטענה שצריך לעצור את החקיקה הפופוליסטית .
-plenary_sentence: אתם זוכרים שבכנסת הקודמת נחקק החוק נגד חקיקה , בטענה שצריך לעצור את החקיקה הפופוליסטית .
-plenary_tokens: ['אתם', 'זוכרים', 'שבכנסת', 'הקודמת', 'נחקק', 'החוק', 'נגד', 'חקיקה', ',', 'בטענה', 'שצריך', 'לעצור', 'את', 'החקיקה', 'הפופוליסטית', '.']
-probability of plenary sentence in plenary corpus: -147.37
-probability of plenary sentence in committee corpus: -142.44
+original_sentence: זאת אידיאולוגיה של הפרטה חזירית .
+masked_sentence: זאת אידיאולוגיה של הפרטה [*] .
+plenary_sentence: זאת אידיאולוגיה של הפרטה , .
+plenary_tokens: ['זאת', 'אידיאולוגיה', 'של', 'הפרטה', ',', '.']
+probability of plenary sentence in plenary corpus: -47.65
+probability of plenary sentence in committee corpus: -46.14
 
