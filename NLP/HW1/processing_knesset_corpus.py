@@ -238,13 +238,13 @@ def clean_and_tokenize_sentences(text):
 
 def tokenize_sentence(sentence):
     pattern = r"""
-        \d{1,2}[-/]\d{1,2}[-/]\d{2,4}        # Dates like 22/12/1992 or 12-05-21
-        | \b(?:[A-Za-z]\.){2,}[A-Za-z]?      # English abbreviations like U.S.A., e.g.
-        | \b[א-ת]+(?:'[\w"]+)?               # Hebrew abbreviations like ח"כ, היו"ר
-        | \b[א-ת]'(?:\s?[א-ת]+)?            # Hebrew short names like ח' גולדשטיין
-        | \b[א-ת]+\b                         # Hebrew words
-        | \d+                                # Numbers
-        | [.,!?;:\-\']                       # Punctuation
+        \d{1,2}[-/]\d{1,2}[-/]\d{2,4}           # Dates like 22/12/1992 or 12-05-21
+        | \b(?:[A-Za-z]\.){2,}[A-Za-z]?         # English abbreviations like U.S.A., e.g.
+        | \b[א-ת]+["']?[א-ת]+["']?              # Hebrew abbreviations like מ"מ, היו"ר
+        | \b[א-ת]'(?:\s?[א-ת]+)?                # Hebrew short names like ח' גולדשטיין
+        | \b[א-ת]+\b                            # Hebrew words
+        | \d+                                   # Numbers
+        | [.,!?;:\-\']                          # Punctuation
     """
     return re.findall(pattern, sentence, re.VERBOSE)
 

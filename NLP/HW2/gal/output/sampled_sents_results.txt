@@ -1,70 +1,70 @@
-original_sentence: לגבי מה שעוד ביקשנו בפעם שעברה , שיאושרו הסכמי השירות , לא קיבלנו על זה מענה .
-masked_sentence: לגבי מה שעוד ביקשנו [*] שעברה , שיאושרו הסכמי השירות , לא קיבלנו על זה מענה .
-plenary_sentence: לגבי מה שעוד ביקשנו , שעברה , שיאושרו הסכמי השירות , לא קיבלנו על זה מענה .
+original_sentence: אני רוצה להשלים דבר אחר וחשוב .
+masked_sentence: אני רוצה [*] דבר אחר וחשוב .
+plenary_sentence: אני רוצה , דבר אחר וחשוב .
 plenary_tokens: ,
-probability of plenary sentence in plenary corpus: -219.45
-probability of plenary sentence in committee corpus: -207.05
+probability of plenary sentence in plenary corpus: -83.35
+probability of plenary sentence in committee corpus: -81.97
 
-original_sentence: כשזה קורה בתוך המשפחה , קשה לאם להאמין שבעלה תקף מינית את בתם והרבה פעמים עצם הישיבה בבית המשפט , עצם שמיעת ההוכחות בבית המשפט מביאה את האם במקרה הזה או בני משפחה אחרים להכיר בכך שאכן הילד דובר אמת .
-masked_sentence: כשזה קורה בתוך המשפחה , קשה לאם להאמין שבעלה תקף מינית את בתם והרבה פעמים עצם הישיבה בבית המשפט [*] עצם שמיעת [*] בבית המשפט מביאה את [*] במקרה הזה או בני משפחה אחרים להכיר [*] שאכן הילד דובר אמת .
-plenary_sentence: כשזה קורה בתוך המשפחה , קשה לאם להאמין שבעלה תקף מינית את בתם והרבה פעמים עצם הישיבה בבית המשפט , עצם שמיעת , בבית המשפט מביאה את , במקרה הזה או בני משפחה אחרים להכיר , שאכן הילד דובר אמת .
-plenary_tokens: ,, ,, ,, ,
-probability of plenary sentence in plenary corpus: -544.44
-probability of plenary sentence in committee corpus: -517.40
+original_sentence: הבהרתי לכם בדיוק מה שהיה .
+masked_sentence: הבהרתי לכם בדיוק מה [*] .
+plenary_sentence: הבהרתי לכם בדיוק מה , .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -77.58
+probability of plenary sentence in committee corpus: -74.90
 
-original_sentence: כפי שאני הבנתי ממך , זה לא המצב , אבל אני רציתי לבטא את זה עוד פעם ולשמוע שאין כל כוונה , אלא להיפך , לחזק את הרשות .
-masked_sentence: כפי שאני הבנתי ממך , זה לא המצב , אבל אני רציתי לבטא את זה עוד פעם ולשמוע [*] כל כוונה , אלא להיפך , לחזק [*] הרשות .
-plenary_sentence: כפי שאני הבנתי ממך , זה לא המצב , אבל אני רציתי לבטא את זה עוד פעם ולשמוע , כל כוונה , אלא להיפך , לחזק , הרשות .
+original_sentence: בעיניי זה נושא מהותי ואני אבקש משגית , היועצת המשפטית של הכנסת , לבוא לכאן ולהסביר את עמדת הייעוץ המשפטי לאור ההתנהלות בכנסת הקודמת .
+masked_sentence: בעיניי זה נושא מהותי ואני אבקש משגית , היועצת [*] של הכנסת , לבוא לכאן [*] את עמדת הייעוץ המשפטי לאור ההתנהלות בכנסת הקודמת .
+plenary_sentence: בעיניי זה נושא מהותי ואני אבקש משגית , היועצת , של הכנסת , לבוא לכאן , את עמדת הייעוץ המשפטי לאור ההתנהלות בכנסת הקודמת .
 plenary_tokens: ,, ,
-probability of plenary sentence in plenary corpus: -346.42
-probability of plenary sentence in committee corpus: -334.07
+probability of plenary sentence in plenary corpus: -312.28
+probability of plenary sentence in committee corpus: -304.28
 
-original_sentence: אוקיי , אז לא .
-masked_sentence: אוקיי , [*] לא .
-plenary_sentence: אוקיי , , לא .
+original_sentence: זה מנוגד גם למשפט הבין - לאומי וגם לחוקי מדינת ישראל , לפי הבנתי .
+masked_sentence: זה מנוגד גם למשפט הבין - לאומי וגם לחוקי מדינת ישראל , לפי הבנתי [*]
+plenary_sentence: זה מנוגד גם למשפט הבין - לאומי וגם לחוקי מדינת ישראל , לפי הבנתי ,
 plenary_tokens: ,
-probability of plenary sentence in plenary corpus: -58.76
-probability of plenary sentence in committee corpus: -56.44
+probability of plenary sentence in plenary corpus: -184.94
+probability of plenary sentence in committee corpus: -180.90
 
-original_sentence: תיכף נגיע לאיזונים של בעל תפקיד .
-masked_sentence: תיכף נגיע לאיזונים [*] בעל תפקיד .
-plenary_sentence: תיכף נגיע לאיזונים , בעל תפקיד .
+original_sentence: לא כך בונים את החומה .
+masked_sentence: [*] כך בונים את החומה .
+plenary_sentence: , כך בונים את החומה .
 plenary_tokens: ,
-probability of plenary sentence in plenary corpus: -94.60
-probability of plenary sentence in committee corpus: -89.66
+probability of plenary sentence in plenary corpus: -77.65
+probability of plenary sentence in committee corpus: -75.26
 
-original_sentence: אישית הוא לא הוזמן .
-masked_sentence: אישית [*] לא הוזמן .
-plenary_sentence: אישית , לא הוזמן .
+original_sentence: הוא גדל בהרבה מעבר למספר שנקבת .
+masked_sentence: [*] גדל בהרבה מעבר למספר שנקבת .
+plenary_sentence: , גדל בהרבה מעבר למספר שנקבת .
 plenary_tokens: ,
-probability of plenary sentence in plenary corpus: -61.42
-probability of plenary sentence in committee corpus: -59.53
+probability of plenary sentence in plenary corpus: -95.41
+probability of plenary sentence in committee corpus: -90.79
 
-original_sentence: גם אנחנו מתעמתים איתו , כולנו בחזיתות האלה .
-masked_sentence: גם אנחנו מתעמתים איתו , [*] בחזיתות האלה .
-plenary_sentence: גם אנחנו מתעמתים איתו , , בחזיתות האלה .
+original_sentence: אם קבלן שמעסיק עובדים לא משלם את הזכויות שלהם , כפי שקורה בדרך כלל .
+masked_sentence: אם קבלן שמעסיק עובדים לא [*] את הזכויות שלהם , כפי שקורה בדרך כלל .
+plenary_sentence: אם קבלן שמעסיק עובדים לא , את הזכויות שלהם , כפי שקורה בדרך כלל .
 plenary_tokens: ,
-probability of plenary sentence in plenary corpus: -118.35
-probability of plenary sentence in committee corpus: -112.07
+probability of plenary sentence in plenary corpus: -182.79
+probability of plenary sentence in committee corpus: -177.89
 
-original_sentence: אין כאן משהו תיאורטי אלא תשלומים בפועל .
-masked_sentence: אין [*] משהו תיאורטי אלא תשלומים בפועל .
-plenary_sentence: אין , משהו תיאורטי אלא תשלומים בפועל .
+original_sentence: זה שנתיים אחורה עם מה שיש .
+masked_sentence: זה שנתיים אחורה [*] מה שיש .
+plenary_sentence: זה שנתיים אחורה , מה שיש .
 plenary_tokens: ,
-probability of plenary sentence in plenary corpus: -106.03
-probability of plenary sentence in committee corpus: -101.13
+probability of plenary sentence in plenary corpus: -88.00
+probability of plenary sentence in committee corpus: -84.41
 
-original_sentence: האם אנחנו לא עומדים בפני בעיה שאדם , אישה בדרך כלל , אינו מעוניין לחוות את החוויה פעם נוספת , ולכן הוא לא רוצה לחזור אל המהלך .
-masked_sentence: האם אנחנו לא עומדים בפני בעיה שאדם , אישה בדרך כלל , [*] מעוניין לחוות את החוויה פעם נוספת , ולכן הוא לא רוצה [*] אל המהלך .
-plenary_sentence: האם אנחנו לא עומדים בפני בעיה שאדם , אישה בדרך כלל , , מעוניין לחוות את החוויה פעם נוספת , ולכן הוא לא רוצה , אל המהלך .
-plenary_tokens: ,, ,
-probability of plenary sentence in plenary corpus: -348.12
-probability of plenary sentence in committee corpus: -336.81
-
-original_sentence: פרק אחד עוסק במקומות ציבוריים ישנים , שלעניין הזה שר המשפטים יתקין תקנות בדבר אופן ההנגשה .
-masked_sentence: פרק אחד עוסק במקומות ציבוריים [*] , שלעניין הזה שר המשפטים יתקין תקנות בדבר אופן ההנגשה .
-plenary_sentence: פרק אחד עוסק במקומות ציבוריים , , שלעניין הזה שר המשפטים יתקין תקנות בדבר אופן ההנגשה .
+original_sentence: בשטח יש 70 תחנות ו - 200 , 000 אנשים בשנה בקנה .
+masked_sentence: בשטח יש 70 תחנות ו - 200 , [*] אנשים בשנה בקנה .
+plenary_sentence: בשטח יש 70 תחנות ו - 200 , , אנשים בשנה בקנה .
 plenary_tokens: ,
-probability of plenary sentence in plenary corpus: -226.78
-probability of plenary sentence in committee corpus: -219.03
+probability of plenary sentence in plenary corpus: -168.59
+probability of plenary sentence in committee corpus: -162.29
+
+original_sentence: יש מוסלמים , יש נוצרים , יד דרוזים .
+masked_sentence: יש מוסלמים , יש נוצרים , יד [*] .
+plenary_sentence: יש מוסלמים , יש נוצרים , יד , .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -116.06
+probability of plenary sentence in committee corpus: -112.70
 
