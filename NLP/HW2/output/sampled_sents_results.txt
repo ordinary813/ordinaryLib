@@ -1,0 +1,70 @@
+original_sentence: אני לגמרי מקבל את הרעיון שצריך לקרוא לזה קרן במצוקה למנהלי הסדר" , או איזשהו שם אטרקטיבי נוסף , שיוקצה משאב או משאבים שייתנו תמריץ למנהלי ההסדר באמת למלא את תפקידם ולגרום להצלחת התהליך הזה .
+masked_sentence: אני לגמרי מקבל את הרעיון שצריך לקרוא לזה קרן במצוקה [*] הסדר" , או איזשהו שם אטרקטיבי [*] , שיוקצה משאב או משאבים שייתנו תמריץ למנהלי ההסדר באמת למלא את תפקידם ולגרום [*] התהליך הזה .
+plenary_sentence: אני לגמרי מקבל את הרעיון שצריך לקרוא לזה קרן במצוקה , הסדר" , או איזשהו שם אטרקטיבי , , שיוקצה משאב או משאבים שייתנו תמריץ למנהלי ההסדר באמת למלא את תפקידם ולגרום , התהליך הזה .
+plenary_tokens: ,, ,, ,
+probability of plenary sentence in plenary corpus: -380.79
+probability of plenary sentence in committee corpus: -354.94
+
+original_sentence: אני מסכים , ובלבד שיהיה נציג לש"ס , ולא נציג למפלגת העבודה שהיא נותנת לש"ס .
+masked_sentence: אני מסכים , ובלבד [*] נציג לש"ס , ולא נציג למפלגת העבודה שהיא נותנת לש"ס .
+plenary_sentence: אני מסכים , ובלבד , נציג לש"ס , ולא נציג למפלגת העבודה שהיא נותנת לש"ס .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -162.60
+probability of plenary sentence in committee corpus: -154.84
+
+original_sentence: ועדה לא יכולה להיות אדישה לתהליכים כאלה , במצב שבו התוכנית לא עובדת .
+masked_sentence: ועדה לא יכולה להיות [*] לתהליכים כאלה , במצב שבו התוכנית לא עובדת .
+plenary_sentence: ועדה לא יכולה להיות , לתהליכים כאלה , במצב שבו התוכנית לא עובדת .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -142.08
+probability of plenary sentence in committee corpus: -132.71
+
+original_sentence: ברמת העיקרון הנפגע יכול לרדת , יש קישור למטה , ל"שינוי הגדרות וביטול השירות" .
+masked_sentence: ברמת העיקרון הנפגע יכול לרדת , יש קישור למטה , ל"שינוי [*] וביטול השירות" .
+plenary_sentence: ברמת העיקרון הנפגע יכול לרדת , יש קישור למטה , ל"שינוי , וביטול השירות" .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -160.43
+probability of plenary sentence in committee corpus: -148.70
+
+original_sentence: אין לי בעיה , גם סטודנטים קיבלו .
+masked_sentence: אין לי בעיה , [*] סטודנטים קיבלו .
+plenary_sentence: אין לי בעיה , , סטודנטים קיבלו .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -79.13
+probability of plenary sentence in committee corpus: -75.34
+
+original_sentence: הניסיון להציג את החלטות בית המשפט כאילו הן פופוליסטיות לעומת ההחלטות השערורייתיות שמתקבלות באוצר .
+masked_sentence: הניסיון להציג את החלטות בית [*] כאילו הן פופוליסטיות לעומת ההחלטות השערורייתיות שמתקבלות באוצר .
+plenary_sentence: הניסיון להציג את החלטות בית , כאילו הן פופוליסטיות לעומת ההחלטות השערורייתיות שמתקבלות באוצר .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -158.35
+probability of plenary sentence in committee corpus: -148.80
+
+original_sentence: אודי , האם קיבלת את המחקר שעשו ב - מ .
+masked_sentence: אודי , האם קיבלת את המחקר שעשו [*] - מ .
+plenary_sentence: אודי , האם קיבלת את המחקר שעשו , - מ .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -117.10
+probability of plenary sentence in committee corpus: -107.75
+
+original_sentence: שאחד מנציגי הציבור יהיה נציג ארגוני צרכנים כהגדרתם בסעיף 31 ג לחוק הגנת הצרכן , התשמ"א - 1981 .
+masked_sentence: שאחד מנציגי הציבור יהיה נציג ארגוני צרכנים כהגדרתם בסעיף 31 ג לחוק הגנת הצרכן , התשמ"א [*] 1981 .
+plenary_sentence: שאחד מנציגי הציבור יהיה נציג ארגוני צרכנים כהגדרתם בסעיף 31 ג לחוק הגנת הצרכן , התשמ"א , 1981 .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -207.57
+probability of plenary sentence in committee corpus: -185.68
+
+original_sentence: המיזם לביטחון תזונתי מסוגל היום עם מידע ספציפי להעביר למי שצריך לחלק ממי שצריך לפחות .
+masked_sentence: המיזם לביטחון תזונתי מסוגל היום עם מידע ספציפי להעביר [*] שצריך לחלק ממי שצריך לפחות .
+plenary_sentence: המיזם לביטחון תזונתי מסוגל היום עם מידע ספציפי להעביר , שצריך לחלק ממי שצריך לפחות .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -173.29
+probability of plenary sentence in committee corpus: -159.95
+
+original_sentence: הדבר השלישי : הרי הרציונאל של הסעיף הזה בתקנון הוא לאפשר לכנסת להגיב לדברים שעומדים על סדר היום .
+masked_sentence: הדבר [*] : הרי הרציונאל של הסעיף הזה בתקנון הוא לאפשר לכנסת להגיב לדברים שעומדים על סדר היום .
+plenary_sentence: הדבר , : הרי הרציונאל של הסעיף הזה בתקנון הוא לאפשר לכנסת להגיב לדברים שעומדים על סדר היום .
+plenary_tokens: ,
+probability of plenary sentence in plenary corpus: -200.39
+probability of plenary sentence in committee corpus: -181.04
+
