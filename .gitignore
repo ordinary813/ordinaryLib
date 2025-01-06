@@ -2,4 +2,7 @@ Machine learning/HW4/kaggle
 Private
 ProjectCS/ImgClassificationTest/Data
 NLP/HW1/output
-**/myenv/
+**/myvenv/
+*.Identifier
+**/data/
+**/Test/
