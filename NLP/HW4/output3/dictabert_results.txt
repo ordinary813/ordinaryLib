@@ -1,0 +1,40 @@
+masked_sentence: [MASK] מדבר על מקרה שאתה יכול להשעות אותו עד שיחכו .
+dictaBERT_sentence: אני מדבר על מקרה שאתה יכול להשעות אותו עד שיחכו .
+dictaBERT tokens: אני
+
+masked_sentence: [MASK] אל תיתן 1 , 000 שקל יותר .
+dictaBERT_sentence: " אל תיתן 1 , 000 שקל יותר .
+dictaBERT tokens: "
+
+masked_sentence: הם [MASK] שיש להם תאריך , והם הצביעו על השלבים שהם [MASK] לעבור עד סוף יוני , כדי שלשיחות היזומות יהיה פתרון סוחף .
+dictaBERT_sentence: הם אמרו שיש להם תאריך , והם הצביעו על השלבים שהם צריכים לעבור עד סוף יוני , כדי שלשיחות היזומות יהיה פתרון סוחף .
+dictaBERT tokens: אמרו, צריכים
+
+masked_sentence: [MASK] , זה היה שימוש לרעה .
+dictaBERT_sentence: לא , זה היה שימוש לרעה .
+dictaBERT tokens: לא
+
+masked_sentence: אם אתם [MASK] לדון כאופוזיציה - - -
+dictaBERT_sentence: אם אתם רוצים לדון כאופוזיציה - - -
+dictaBERT tokens: רוצים
+
+masked_sentence: התקציב קוצץ מ - [MASK] ל - 15 מיליון , למען הדיוק .
+dictaBERT_sentence: התקציב קוצץ מ - 10 ל - 15 מיליון , למען הדיוק .
+dictaBERT tokens: 10
+
+masked_sentence: אנחנו מסתכלים על זה מעט אחרת , אנחנו מקבלים [MASK] ומתאימים לו מענה .
+dictaBERT_sentence: אנחנו מסתכלים על זה מעט אחרת , אנחנו מקבלים אותו ומתאימים לו מענה .
+dictaBERT tokens: אותו
+
+masked_sentence: העובדים שעובדים היום במתנ " ס , נמצא [MASK] מנהל המתנ " ס , [MASK] היה גם קודם לכן , יכול להעיד מקבלים את שכרם ב - 1 לחודש , לא ב - 10 [MASK] לא ב - 09 [MASK] ולא ב - 20 לחודש [MASK] כך כמו שהיה קודם לכן , מקבלים ב - 1 לחודש את [MASK] .
+dictaBERT_sentence: העובדים שעובדים היום במתנ " ס , נמצא שגם מנהל המתנ " ס , וכך היה גם קודם לכן , יכול להעיד מקבלים את שכרם ב - 1 לחודש , לא ב - 10 , לא ב - 09 לחודש ולא ב - 20 לחודש , כך כמו שהיה קודם לכן , מקבלים ב - 1 לחודש את שכרם .
+dictaBERT tokens: שגם, וכך, ,, לחודש, ,, שכרם
+
+masked_sentence: אף [MASK] עדיין לא חותם .
+dictaBERT_sentence: אף אחד עדיין לא חותם .
+dictaBERT tokens: אחד
+
+masked_sentence: זאת אידיאולוגיה של הפרטה [MASK] .
+dictaBERT_sentence: זאת אידיאולוגיה של הפרטה " .
+dictaBERT tokens: "
+

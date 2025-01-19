@@ -1,6 +1,6 @@
 from gensim.models import Word2Vec
 import json
-import re, os, argparse
+import re, argparse, os
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -9,7 +9,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "path_to_corpus",
         type=str,
-        help="Path to the corpus jsonl file."
+        help="Path to the corpus file."
     )
 
     parser.add_argument(
@@ -25,9 +25,7 @@ if __name__ == '__main__':
 
     # Create output directory if it does not exist
     os.makedirs(out_dir, exist_ok=True)
-
     # -------- part 1-------------#
-    # Load the corpus
     tokenized_sentences = []
 
     with open(corpus_file, 'r', encoding='utf-8') as f:
@@ -98,7 +96,7 @@ if __name__ == '__main__':
     # -------- Check antonyms distances for question 2------------#
 
     # List of antonym pairs to check
-    antonym_pairs = [("אהבה", "שנאה"), ("קל", "כבד")]
+    antonym_pairs = [("אהבה", "שנאה"), ("קל", "כבד"),("שקט", "רעש")]
 
     def cosine_distance(word1, word2, model):
         try:
@@ -111,6 +109,13 @@ if __name__ == '__main__':
         except KeyError:
             return None
 
+    # #print antonym distances
+    # for word1, word2 in antonym_pairs:
+    #     distance = cosine_distance(word1, word2, model)
+    #     if distance is not None:
+    #         print(f"Distance between {word1} and {word2}: {distance:.4f}\n")
+    #     else:
+    #         print(f"One or both words '{word1}' and '{word2}' not in vocabulary\n")
 
     # -------------------------------------------------- #
 
@@ -177,6 +182,7 @@ if __name__ == '__main__':
 
         original_sentence = sentence
         modified_sentence = sentence
+        replaced_words = []  # List to store replaced words for this sentence
 
         # Replace all red words in the sentence
         for word_to_replace in red_words:
@@ -214,7 +220,7 @@ if __name__ == '__main__':
                         similar_words = model.wv.most_similar(word_to_replace, topn=3)
                         new_word = similar_words[0][0]
                     case 'קידום':
-                        similar_words = model.wv.most_similar(word_to_replace,topn=3)
+                        similar_words = model.wv.most_similar(word_to_replace, topn=3)
                         new_word = similar_words[0][0]
                     case 'מניעה':
                         similar_words = model.wv.most_similar(positive=[word_to_replace, "הפרעה", "איסור", "הגבלה"], topn=3)
@@ -225,13 +231,15 @@ if __name__ == '__main__':
 
                 # Replace the word in the sentence
                 modified_sentence = modified_sentence.replace(word_to_replace, new_word)
+                replaced_words.append(f"({word_to_replace} : {new_word})")  # Store the replacement for later
 
             except KeyError:
                 pass
 
-        # Append the modified sentence and the replaced words
+        # Append the modified sentence only once, after all replacements
         replaced_sentences.append(f"{sentence_number}: {original_sentence}: {modified_sentence}\n")
-        replaced_sentences.append(f"replaced words: {', '.join([f'({word} : {new_word})' for word in red_words])}\n")
+        replaced_sentences.append(f"replaced words: {', '.join(replaced_words)}\n")
 
+    # Write the output to a file
     with open(os.path.join(out_dir, "red_words_sentences.txt"), "w", encoding="utf-8") as f:
         f.writelines(replaced_sentences)

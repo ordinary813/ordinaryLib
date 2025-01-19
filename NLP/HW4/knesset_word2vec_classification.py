@@ -160,7 +160,7 @@ if __name__ == '__main__':
         else:
             raise ValueError("Unexpected number of classes!")
 
-        #print(classification_report(y, y_pred, target_names=target_names, zero_division=0))
+        print(classification_report(y, y_pred, target_names=target_names, zero_division=0))
 
 
     evaluate_classifier(knn, X_binary_downsampled, y_binary_downsampled, 'KNN with sentence embeddings', 'Binary Classification')

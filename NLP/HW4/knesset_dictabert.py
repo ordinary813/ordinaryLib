@@ -3,6 +3,10 @@ import torch
 import argparse, os
 
 if __name__ == '__main__':
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+    os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+    os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+    
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "path_to_masked_sentences",
