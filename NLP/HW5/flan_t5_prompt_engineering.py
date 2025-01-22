@@ -1,25 +1,45 @@
-import os, torch, random
+import os, torch, random, argparse
 from datasets import load_dataset, load_from_disk
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "imdb_dir",
+    type=str,
+    help="Path to the directory of the imdb dataset."
+)
+
+parser.add_argument(
+    "output_file_path",
+    type=str,
+    help="Path to the output txt file."
+)
+
+args = parser.parse_args()
+
+imdb_dir = args.imdb_dir
+output_file_path = args.output_file_path
 
 ### Utilize GPU ##
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ### Load the IMDB dataset ###
-dataset_path = 'imdb_subset'
+dataset_path = imdb_dir
 # if the path exists - load the dataset from disk, otherwise download it
 if os.path.exists(dataset_path):
     subset = load_from_disk(dataset_path)
 else:
     dataset = load_dataset('imdb')
     subset = dataset['train'].shuffle(seed=42).select(range(500))
-    subset.save_to_disk('imdb_subset')
+    subset.save_to_disk(dataset_path)
 
 dataset = subset
 dataset = dataset.rename_column("label", "labels")
 
 flan_tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
 flan_model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-small")
+flan_model = flan_model.to(device)
 
 sampled_reviews = random.sample(list(dataset), 50)
 
@@ -46,7 +66,7 @@ def generate_response(prompt, model, tokenizer, max_length=20):
     response = tokenizer.decode(output[0], skip_special_tokens=True)
     return response
 
-output_file = 'flan_t5_imdb_results.txt'
+output_file = output_file_path
 
 with open(output_file, 'w') as f:
     for i, review in enumerate(sampled_reviews):

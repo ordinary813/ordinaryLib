@@ -1,4 +1,4 @@
-import os, torch
+import os, torch, argparse
 import numpy as np
 from sklearn.metrics import accuracy_score
 from datasets import load_dataset, load_from_disk, disable_progress_bar
@@ -9,18 +9,30 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 logging.set_verbosity_error()
 disable_progress_bar()
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    "imdb_dir",
+    type=str,
+    help="Path to the directory of the imdb dataset."
+)
+
+args = parser.parse_args()
+
+imdb_dir = args.imdb_dir
+
 ### Utilize GPU ##
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ### Load the IMDB dataset ###
-dataset_path = 'imdb_subset'
+dataset_path = imdb_dir
 # if the path exists - load the dataset from disk, otherwise download it
 if os.path.exists(dataset_path):
     subset = load_from_disk(dataset_path)
 else:
     dataset = load_dataset('imdb')
     subset = dataset['train'].shuffle(seed=42).select(range(500))
-    subset.save_to_disk('imdb_subset')
+    subset.save_to_disk(dataset_path)
 
 dataset = subset
 dataset = dataset.rename_column("label", "labels")
@@ -61,12 +73,9 @@ training_args = TrainingArguments(
     save_total_limit=2,                   # Limit the number of saved checkpoints
     log_level = 'error',
     disable_tqdm=True,
+    logging_strategy="no",
+    report_to="none",
 )
-
-def compute_metrics(eval_pred):
-    predictions, labels = eval_pred
-    preds = np.argmax(predictions, axis=1)  # Get the index of the max logit
-    return {"accuracy": accuracy_score(labels, preds)}
 
 trainer = Trainer(
     model=model,                          # The pre-trained model to fine-tune
@@ -74,7 +83,6 @@ trainer = Trainer(
     train_dataset=tokenized_train,        # Training dataset
     eval_dataset=tokenized_eval,          # Evaluation dataset
     tokenizer=tokenizer,                  # Tokenizer for data preprocessing
-    compute_metrics=compute_metrics       # Custom metrics function
 )
 
 ### Training + deploying model to GPU ###
