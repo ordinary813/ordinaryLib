@@ -134,10 +134,6 @@ pattern = cv2.cvtColor(pattern, cv2.COLOR_BGR2GRAY)
 ############# DEMO #############
 display(image, pattern)
 
-
-
-
-
 ############# Students #############
 
 image_scaled = image
@@ -155,7 +151,6 @@ real_matches[:,1] += pattern_scaled.shape[1] // 2			# if pattern was not scaled,
 # If you chose to scale the original image, make sure to scale back the matches in the inverse resize ratio.
 
 draw_matches(image, real_matches, pattern_scaled.shape)	# if pattern was not scaled, replace this with "pattern"
-
 
 ############# Crew #############
 CURR_IMAGE = "thecrew"
