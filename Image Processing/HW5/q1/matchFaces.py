@@ -1,5 +1,5 @@
-# Student_Name1, Student_ID1
-# Student_Name2, Student_ID2
+# Itamar Brotzky, 207931296
+# Or Dinar, 207035809
 
 # Please replace the above comments with your names and ID numbers in the same format.
 
@@ -73,19 +73,18 @@ def ncc_2d(image, pattern):
     epsilon = 1e-6
     denominator = window_stds * pattern_std + epsilon
 
-
+    # Compute NCC
     ncc = np.zeros_like(denominator)
-    valid_mask = denominator != epsilon                                # Mask for non-zero denominators
-    ncc[valid_mask] = numerator[valid_mask] / denominator[valid_mask]  # Compute NCC only where denominator is not 0
+    valid_mask = denominator != epsilon                                # Mask for non-zero denominators to avoid division by 0
+    ncc[valid_mask] = numerator[valid_mask] / denominator[valid_mask]
 
     max_ncc = np.max(ncc)
     min_ncc = np.min(ncc)
     
-    if max_ncc != min_ncc:  # Avoid division by zero if all values are identical
+    if max_ncc != min_ncc:
         ncc = 2 * (ncc - min_ncc) / (max_ncc - min_ncc) - 1  # Normalize to [-1, 1]
 
     return ncc
-
 
 def display(image, pattern):
 	
@@ -142,7 +141,7 @@ pattern_scaled =  scale_down(pattern, 0.53)
 display(image_scaled, pattern_scaled)
 
 ncc = ncc_2d(image_scaled, pattern_scaled)
-real_matches = np.argwhere(ncc > 0.7)
+real_matches = np.argwhere(ncc > 0.76)
 
 ######### DONT CHANGE THE NEXT TWO LINES #########
 real_matches[:,0] += pattern_scaled.shape[0] // 2			# if pattern was not scaled, replace this with "pattern"
@@ -158,7 +157,7 @@ image = cv2.imread(f'{CURR_IMAGE}.jpg')
 image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 image_scaled = image
-pattern_scaled =  scale_down(pattern, 0.45)
+pattern_scaled =  scale_down(pattern, 0.43)
 
 display(image_scaled, pattern_scaled)
 
