@@ -1,0 +1,80 @@
+Part 1: (Song Lyrics Generation)
+Import the file into your notebook and showcase a couple of rows from
+it.
+
+Print all of the artist’s names and show how many songs are associated with each artist.
+
+Print the size of the dataset and how many songs are there.
+
+Print the average number of characters and words of a song for all songs lyrics in the dataset (the average length of a song).
+
+A nice to way to visualize text data with repeated words is by using a word cloud image.
+Go over all the songs lyrics and print the top 3 most used words in the songs.
+Then use a word cloud image to visualize the data, the most used words should appear the biggest in the word cloud.
+
+
+
+
+Preprocessing:
+Create a corpus from the given lyrics.
+
+Remove any unrequired characters from the corpus, to do 
+that you have to look in the corpus and check out if you got 
+unnecessary symbols such as foreign language characters … etc.
+
+Encode the data to make it ready for training the model.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Model Definition and training:
+Use an LSTM model that can handle sequential data, as well as any
+loss function and optimizer of your choosing that you think is suitable
+for this task to train the model on the data.
+
+Train the model on the lyrics such that it can be used to generate new
+lyrics afterwards, train it for 100 epochs and plot the training loss as a
+function to the number of epochs.
+
+
+
+Evaluation:
+Define a function to generate new lyrics such that it takes a starting string and a character count.
+Def LyricsGenerator(starting_string, char_count)
+
+The model should take the starting string as a prior and start generating
+new lyrics after that string, and it should stop generating once it reaches the character count.
+
+In class, we learned multiple generation strategies (such as top-k, top-p…), make sure you use a suitable strategy.
+Since you are going to experiment with multiple strategies, write in a
+text box the strategy you used and how the algorithm works in your case,
+as well as a couple of results from previous strategies you didn’t end up choosing,
+showcase the difference between the generations.
+
+
+To evaluate the model, we will generate 3 songs with different starting
+strings and a max character count to be the average character count of
+the songs in the dataset (which you extracted before).
+Song 1 starts with “ it’s not a silly little moment …”
+Song 2 starts with your favorite song’s first sentence, write down which
+song you chose in a text box above the cell,
+ “ — type your favorite song’s starting string —”
+Song 3 starts with an empty string “”, this should generate a new song
+from scratch.
+
+In the end you should have a minimum of 2 generations per song using
+different strategies.
